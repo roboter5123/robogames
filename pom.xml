@@ -72,7 +72,7 @@
         <repository>
             <id>github</id>
             <name>GitHub petometry Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/petometry/${project.artifactId}</url>
+            <url>https://maven.pkg.github.com/roboter5123/${project.artifactId}</url>
         </repository>
     </distributionManagement>
 </project>
