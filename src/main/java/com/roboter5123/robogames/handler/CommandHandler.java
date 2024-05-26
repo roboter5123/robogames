@@ -62,10 +62,21 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return leaveGame(player);
             case "start":
                 return startGame(player);
+            case "end":
+                return endGame(player);
             default:
                 commandSender.sendMessage(this.languageService.getMessage("unknown-subcommand") + args[0]);
                 return false;
         }
+    }
+
+    private boolean endGame(Player player) {
+        if (!player.hasPermission("hungergames.end")){
+            player.sendMessage(this.languageService.getMessage("no-permission"));
+            return true;
+        }
+        new EndGameCommand(this.gameService, this.spawnService, this.playerService).run();
+        return true;
     }
 
     private boolean startGame(Player player) {
@@ -80,7 +91,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private boolean setSpawn(Player player) {
         if (!player.hasPermission("robogames.setspawn")) {
             player.sendMessage(this.languageService.getMessage("no-permission"));
-            return false;
+            return true;
         }
         new SetSpawnCommand(player, this.languageService, this.spawnService, this.gameService).run();
         return true;
@@ -89,7 +100,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private boolean createArena(Player player) {
         if (!player.hasPermission("robogames.create")) {
             player.sendMessage(this.languageService.getMessage("no-permission"));
-            return false;
+            return true;
         }
         new CreateArenaCommand(player, languageService, arenaService).run();
         return true;
@@ -98,7 +109,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private boolean selectArena(Player player) {
         if (!player.hasPermission("robogames.select")) {
             player.sendMessage(this.languageService.getMessage(""));
-            return false;
+            return true;
         }
         new SelectArenaCommand(player, this.languageService).run();
         return true;

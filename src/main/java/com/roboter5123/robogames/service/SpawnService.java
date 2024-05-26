@@ -108,4 +108,9 @@ public class SpawnService {
         spawnPoint.setCoordinate(coordinate);
         return spawnPoint;
     }
+
+    public void clearPlayerSpawns() {
+        this.freeSpawnPoints = new ArrayList<>(this.allSpawns);
+        this.playerSpawnPoints.clear();
+    }
 }

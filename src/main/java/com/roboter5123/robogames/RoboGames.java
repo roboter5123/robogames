@@ -1,9 +1,9 @@
 package com.roboter5123.robogames;
 
 import com.roboter5123.robogames.handler.CommandHandler;
-import com.roboter5123.robogames.listeners.MoveDisableListener;
-import com.roboter5123.robogames.listeners.SelectPosListener;
-import com.roboter5123.robogames.listeners.SetSpawnListener;
+import com.roboter5123.robogames.listener.MoveDisableListener;
+import com.roboter5123.robogames.listener.SelectPosListener;
+import com.roboter5123.robogames.listener.SetSpawnListener;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -51,29 +51,5 @@ public final class RoboGames extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-    }
-
-    public SchedulerService getSchedulerService() {
-        return this.schedulerService;
-    }
-
-    public ArenaService getArenaService() {
-        return arenaService;
-    }
-
-    public ConfigService getConfigService() {
-        return configService;
-    }
-
-    public PlayerService getPlayerService() {
-        return playerService;
-    }
-
-    public LanguageService getLanguageService() {
-        return languageService;
-    }
-
-    public GameService getGameService() {
-        return gameService;
     }
 }
