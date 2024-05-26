@@ -1,0 +1,45 @@
+name: robogames
+version: '${project.version}'
+main: com.roboter5123.robogames.RoboGames
+api-version: '1.20'
+commands:
+  robogames:
+    description: "Main command for RoboGames"
+    usage: /<command> <subcommand> [args]
+permissions:
+  robogames.join:
+    description: "Allows you to join the game in roboGames"
+    default: true
+  robogames.select:
+    description: "Allows you to select an arena in roboGames"
+    default: op
+  robogames.create:
+    description: "Allows you to create an arena in roboGames"
+    default: op
+  robogames.chestrefill:
+    description: "Allows you to refill chests in roboGames"
+    default: op
+  robogames.supplydrop:
+    description: "Allows you to drop a supply crate in roboGames"
+    default: op
+  robogames.setspawn:
+    description: "Allows you to set spawnpoints for arenas in roboGames"
+    default: op
+  robogames.start:
+    description: "Allows you to start the game in roboGames"
+    default: op
+  robogames.end:
+    description: "Allows you to forcefully end the game in roboGames"
+    default: op
+  robogames.scanarena:
+    description: "Allows you to scan the arena for chests in roboGames"
+    default: op
+  robogames.border:
+    description: "Allows you to change the world border in roboGames"
+    default: op
+  robogames.spectate:
+    description: "Allows you to spectate players in roboGames"
+    default: true
+  robogames.reloadconfig:
+    description: "Allows you to reload the config file for roboGames"
+    default: op
