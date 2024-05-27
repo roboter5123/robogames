@@ -1,3 +1,4 @@
+time-past: "&eTime past: "
 time-remaining: "&eTime remaining"
 no-permission: "&cYou do not have permission to run this command"
 no-server: "&cThis command can only be executed by players"
@@ -113,7 +114,7 @@ game:
   winner-text: "&d is the winner!"
   time-up: "&6The time is up! No one won the game!"
   killed-message: "&c has been eliminated from the game by "
-  death-message: "&c has eliminated themselves from the game"
+  death-message: "&c has been eliminated from the game."
 
 setarena:
   first-pos-1: "&dFirst position set at &bX="

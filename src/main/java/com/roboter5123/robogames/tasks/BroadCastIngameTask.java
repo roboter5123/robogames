@@ -7,21 +7,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class BroadCastIngameTask extends BukkitRunnable {
 
-    private final LanguageService languageService;
     private final PlayerService playerService;
-    private final String messageKey;
+    private final String message;
 
-    public BroadCastIngameTask(LanguageService languageService, PlayerService playerService, String messageKey) {
-        this.languageService = languageService;
+    public BroadCastIngameTask( PlayerService playerService, String message) {
         this.playerService = playerService;
-        this.messageKey = messageKey;
+        this.message = message;
     }
 
     @Override
     public void run() {
-
-        for (Player inGamePlayer : this.playerService.getInGamePlayers()) {
-            inGamePlayer.sendMessage(this.languageService.getMessage(this.messageKey));
-        }
+        this.playerService.getInGamePlayers().forEach(player -> player.sendMessage(this.message));
     }
 }

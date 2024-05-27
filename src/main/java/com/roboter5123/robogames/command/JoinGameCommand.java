@@ -47,7 +47,6 @@ public class JoinGameCommand extends BukkitRunnable {
             player.sendMessage(languageService.getMessage("join.not-enough-spawns"));
             return;
         }
-        player.sendMessage(String.valueOf(freeSpawnPoints.size()));
         SpawnPoint spawnPoint = freeSpawnPoints.get(this.random.nextInt(0, freeSpawnPoints.size()));
         this.spawnService.setPlayerSpawn(player, spawnPoint);
 
@@ -55,6 +54,7 @@ public class JoinGameCommand extends BukkitRunnable {
         this.playerService.teleportPlayer(player, world, spawnPoint.getCoordinate());
 
         this.playerService.addInGamePlayer(player);
+        player.setGameMode(GameMode.ADVENTURE);
         player.sendMessage(languageService.getMessage("join.success"));
     }
 }
