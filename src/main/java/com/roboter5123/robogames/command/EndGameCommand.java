@@ -9,7 +9,6 @@ import com.roboter5123.robogames.service.PlayerService;
 import com.roboter5123.robogames.service.SpawnService;
 
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.event.player.EntityDamageEvent;
 
 public class EndGameCommand extends BukkitRunnable {
 
