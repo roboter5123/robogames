@@ -1,6 +1,6 @@
 package com.roboter5123.robogames.listener;
 
-import javax.xml.stream.Location;
+import org.bukkit.Location;
 
 import com.roboter5123.robogames.service.LanguageService;
 import com.roboter5123.robogames.service.PlayerService;

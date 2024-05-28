@@ -1,5 +1,5 @@
 package com.roboter5123.robogames.model;
-
+import org.bukkit.Location;
 
 public class Arena {
 

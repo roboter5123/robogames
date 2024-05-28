@@ -5,6 +5,7 @@ import com.roboter5123.robogames.model.SpawnPoint;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.bukkit.Location;
 
 import java.io.File;
 import java.util.ArrayList;

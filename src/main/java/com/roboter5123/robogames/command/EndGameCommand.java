@@ -2,7 +2,7 @@ package com.roboter5123.robogames.command;
 
 import java.util.List;
 
-import javax.xml.stream.Location;
+import org.bukkit.Location;
 
 import com.roboter5123.robogames.service.GameService;
 import com.roboter5123.robogames.service.PlayerService;

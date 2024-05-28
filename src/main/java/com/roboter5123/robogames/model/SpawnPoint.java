@@ -1,6 +1,7 @@
 package com.roboter5123.robogames.model;
 
 import java.util.Objects;
+import org.bukkit.Location;
 
 public class SpawnPoint {
 
