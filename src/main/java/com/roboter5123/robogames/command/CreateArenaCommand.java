@@ -1,7 +1,6 @@
 package com.roboter5123.robogames.command;
 
 import com.roboter5123.robogames.model.Arena;
-import com.roboter5123.robogames.model.Coordinate;
 import com.roboter5123.robogames.service.ArenaService;
 import com.roboter5123.robogames.service.LanguageService;
 import org.bukkit.Location;
@@ -37,18 +36,10 @@ public class CreateArenaCommand extends BukkitRunnable {
             return;
         }
         Arena arena = new Arena();
-        arena.setWorld(player.getWorld().getName());
-        arena.setPos1(convertToCoordinate(pos1));
-        arena.setPos2(convertToCoordinate(pos2));
+        arena.setWorldName(player.getWorld().getName());
+        arena.setPos1(pos1);
+        arena.setPos2(pos2);
         this.arenaService.createArena(arena);
         player.sendMessage(this.languageService.getMessage("arena.region-created"));
-    }
-
-    private Coordinate convertToCoordinate(Location location) {
-        Coordinate coordinate = new Coordinate();
-        coordinate.setxCoordinate(location.getX());
-        coordinate.setyCoordinate(location.getY());
-        coordinate.setzCoordinate(location.getZ());
-        return coordinate;
     }
 }

@@ -1,17 +1,18 @@
 package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
-import com.roboter5123.robogames.model.Coordinate;
 import com.roboter5123.robogames.model.SpawnPoint;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.bukkit.Location;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class SpawnService {
 
@@ -81,8 +82,8 @@ public class SpawnService {
     }
 
     private String convertToString(SpawnPoint spawn) {
-        Coordinate coordinate = spawn.getCoordinate();
-        return spawn.getWorld() + "," + coordinate.getxCoordinate() + "," + coordinate.getyCoordinate() + "," + coordinate.getzCoordinate();
+        Location location = spawn.getLocation();
+        return spawn.getWorld() + "," + location.getx() + "," + location.gety() + "," + location.getz();
     }
 
     @NotNull
@@ -101,11 +102,11 @@ public class SpawnService {
         String[] fields = spawnPointString.split(",");
         SpawnPoint spawnPoint = new SpawnPoint();
         spawnPoint.setWorld(fields[0]);
-        Coordinate coordinate = new Coordinate();
-        coordinate.setxCoordinate(Double.parseDouble(fields[1]));
-        coordinate.setyCoordinate(Double.parseDouble(fields[2]));
-        coordinate.setzCoordinate(Double.parseDouble(fields[3]));
-        spawnPoint.setCoordinate(coordinate);
+        Location location = new Location();
+        location.setx(Double.parseDouble(fields[1]));
+        location.sety(Double.parseDouble(fields[2]));
+        location.setz(Double.parseDouble(fields[3]));
+        spawnPoint.setLocation(location);
         return spawnPoint;
     }
 

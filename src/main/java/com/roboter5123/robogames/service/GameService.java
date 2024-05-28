@@ -8,6 +8,8 @@ public class GameService {
 
     private final GameState gameState;
 
+    private Long timer;
+
 
     public GameService() {
         this.gameState = new GameState(false, false, new HashMap<>());
@@ -29,5 +31,15 @@ public class GameService {
         this.gameState.setGameStarted(gameStarted);
     }
 
+    public void setTimerTicks(long timer) {
+        this.timer = timer;
+    }
 
+    public Long getTimer() {
+        return timer;
+    }
+
+    public void setTimerTicks(Long timer) {
+        this.timer = timer;
+    }
 }

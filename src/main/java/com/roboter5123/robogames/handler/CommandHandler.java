@@ -18,8 +18,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     private final LanguageService languageService;
     private final PlayerService playerService;
-
-    private final Random random;
     private final SpawnService spawnService;
     private final ArenaService arenaService;
     private final GameService gameService;
@@ -69,6 +67,34 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return false;
         }
     }
+
+	@Nullable
+	@Override
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+		if (args.length == 1) {
+			List<String> completions = new ArrayList<>();
+			String[] commands = {"join", "leave", "start", "end", "create", "select", "setspawn"};
+			for (String cmd : commands) {
+				if (sender.hasPermission("robogames." + cmd)) {
+					completions.add(cmd);
+				}
+			}
+			return completions;
+		}
+
+		if (args[0].equalsIgnoreCase("border")) {
+			List<String> completions = new ArrayList<>();
+			if (args.length == 2) {
+				completions.add(this.languageService.getMessage("border.args-1"));
+			} else if (args.length == 3) {
+				completions.add(this.languageService.getMessage("border.args-2"));
+			} else if (args.length == 4) {
+				completions.add(this.languageService.getMessage("border.args-3"));
+			}
+			return completions;
+		}
+		return new ArrayList<>();
+	}
 
     private boolean endGame(Player player) {
         if (!player.hasPermission("hungergames.end")){
@@ -124,34 +150,5 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         new JoinGameCommand(player, languageService, gameService, playerService, spawnService, arenaService).run();
         return true;
     }
-
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        if (args.length == 1) {
-            List<String> completions = new ArrayList<>();
-            String[] commands = {"join", "leave", "start", "end", "create", "select", "setspawn"};
-            for (String cmd : commands) {
-                if (sender.hasPermission("robogames." + cmd)) {
-                    completions.add(cmd);
-                }
-            }
-            return completions;
-        }
-
-        if (args[0].equalsIgnoreCase("border")) {
-            List<String> completions = new ArrayList<>();
-            if (args.length == 2) {
-                completions.add(this.languageService.getMessage("border.args-1"));
-            } else if (args.length == 3) {
-                completions.add(this.languageService.getMessage("border.args-2"));
-            } else if (args.length == 4) {
-                completions.add(this.languageService.getMessage("border.args-3"));
-            }
-            return completions;
-        }
-        return new ArrayList<>();
-    }
-
 
 }

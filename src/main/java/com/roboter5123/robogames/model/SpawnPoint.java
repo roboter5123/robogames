@@ -1,11 +1,12 @@
 package com.roboter5123.robogames.model;
 
 import java.util.Objects;
+import org.bukkit.Location;
 
 public class SpawnPoint {
 
     private String world;
-    private Coordinate coordinate;
+    private Location location;
 
     public String getWorld() {
         return world;
@@ -15,12 +16,12 @@ public class SpawnPoint {
         this.world = world;
     }
 
-    public Coordinate getCoordinate() {
-        return coordinate;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setCoordinate(Coordinate coordinate) {
-        this.coordinate = coordinate;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override
@@ -28,12 +29,12 @@ public class SpawnPoint {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         SpawnPoint that = (SpawnPoint) object;
-        return Objects.equals(world, that.world) && Objects.equals(coordinate, that.coordinate);
+        return Objects.equals(world, that.world) && Objects.equals(location, that.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(world, coordinate);
+        return Objects.hash(world, location);
     }
 
     @Override
@@ -41,7 +42,7 @@ public class SpawnPoint {
         // @formatter:off
         return "SpawnPoint{" +
                 "world=" + world +
-                "coordinate=" + coordinate +
+                "location=" + location +
                 '}';
         // @formatter:on
     }

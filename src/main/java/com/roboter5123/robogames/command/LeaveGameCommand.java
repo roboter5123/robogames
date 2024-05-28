@@ -1,6 +1,5 @@
 package com.roboter5123.robogames.command;
 
-import com.roboter5123.robogames.model.Coordinate;
 import com.roboter5123.robogames.service.GameService;
 import com.roboter5123.robogames.service.LanguageService;
 import com.roboter5123.robogames.service.PlayerService;
@@ -43,15 +42,8 @@ public class LeaveGameCommand extends BukkitRunnable {
 
         World world = player.getWorld();
         Location worldSpawn = world.getSpawnLocation();
-        this.playerService.teleportPlayer(player, world, convertToCoordinate(worldSpawn));
+        this.playerService.teleportPlayer(player, world, worldSpawn);
         player.sendMessage(this.languageService.getMessage("leave.success"));
     }
 
-    private Coordinate convertToCoordinate(Location location) {
-        Coordinate coordinate = new Coordinate();
-        coordinate.setxCoordinate(location.getX());
-        coordinate.setyCoordinate(location.getY());
-        coordinate.setzCoordinate(location.getZ());
-        return coordinate;
-    }
 }
