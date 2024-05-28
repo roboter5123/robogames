@@ -1,11 +1,11 @@
 package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
-import com.roboter5123.robogames.model.SpawnPoint;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.bukkit.Location;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,10 +17,10 @@ import java.util.Map;
 public class SpawnService {
 
     private final RoboGames roboGames;
-    private List<SpawnPoint> freeSpawnPoints;
+    private List<Location> freeSpawnPoints;
 
-    private final Map<Player, SpawnPoint> playerSpawnPoints;
-    private List<SpawnPoint> allSpawns;
+    private final Map<Player, Location> playerSpawnPoints;
+    private List<Location> allSpawns;
 
     public SpawnService(RoboGames roboGames) {
         this.roboGames = roboGames;
@@ -30,7 +30,7 @@ public class SpawnService {
 
     public void loadSpawnConfig() {
         YamlConfiguration spawnConfig = getSpawnConfig();
-        this.allSpawns = new ArrayList<>(spawnConfig.getStringList("spawnpoints").stream().map(this::convertToSpawnPoint).toList());
+        this.allSpawns = new ArrayList<>(spawnConfig.getStringList("spawnpoints").stream().map(this::convertToLocation).toList());
         this.freeSpawnPoints = new ArrayList<>(this.allSpawns);
         this.playerSpawnPoints.clear();
     }
@@ -42,31 +42,31 @@ public class SpawnService {
         saveSpawnsToConfig();
     }
 
-    public void addSpawn(SpawnPoint newSpawnPoint) {
+    public void addSpawn(Location newSpawnPoint) {
         this.allSpawns.add(newSpawnPoint);
         this.freeSpawnPoints.add(newSpawnPoint);
         saveSpawnsToConfig();
     }
 
-    public void setPlayerSpawn(Player player, SpawnPoint spawnPoint) {
+    public void setPlayerSpawn(Player player, Location spawnPoint) {
         this.playerSpawnPoints.put(player, spawnPoint);
         this.freeSpawnPoints.remove(spawnPoint);
     }
 
     public void removePlayerSpawnPoint(Player player) {
-        SpawnPoint removedSpawnPoint = this.playerSpawnPoints.remove(player);
+        Location removedSpawnPoint = this.playerSpawnPoints.remove(player);
         this.freeSpawnPoints.add(removedSpawnPoint);
     }
 
-    public List<SpawnPoint> getSpawnFreePoints() {
+    public List<Location> getSpawnFreePoints() {
         return this.freeSpawnPoints;
     }
 
-    public Map<Player, SpawnPoint> getPlayerSpawnPoints() {
+    public Map<Player, Location> getPlayerSpawnPoints() {
         return playerSpawnPoints;
     }
 
-    public List<SpawnPoint> getAllSpawns() {
+    public List<Location> getAllSpawns() {
         return this.allSpawns;
     }
 
@@ -81,9 +81,8 @@ public class SpawnService {
         }
     }
 
-    private String convertToString(SpawnPoint spawn) {
-        Location location = spawn.getLocation();
-        return spawn.getWorld() + "," + location.getX() + "," + location.getY() + "," + location.getZ();
+    private String convertToString(Location spawn) {
+        return spawn.getWorld().getName() + "," + spawn.getX() + "," + spawn.getY() + "," + spawn.getZ();
     }
 
     @NotNull
@@ -94,24 +93,20 @@ public class SpawnService {
             roboGames.saveResource("setspawn.yml", false);
         }
 
-        YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
-        return spawnConfig;
-    }
-
-    private SpawnPoint convertToSpawnPoint(String spawnPointString) {
-        String[] fields = spawnPointString.split(",");
-        SpawnPoint spawnPoint = new SpawnPoint();
-        spawnPoint.setWorld(fields[0]);
-        Location location = new Location();
-        location.setx(Double.parseDouble(fields[1]));
-        location.sety(Double.parseDouble(fields[2]));
-        location.setz(Double.parseDouble(fields[3]));
-        spawnPoint.setLocation(location);
-        return spawnPoint;
+        return YamlConfiguration.loadConfiguration(spawnFile);
     }
 
     public void clearPlayerSpawns() {
         this.freeSpawnPoints = new ArrayList<>(this.allSpawns);
         this.playerSpawnPoints.clear();
+    }
+
+    private Location convertToLocation(String spawnPointString) {
+        String[] fields = spawnPointString.split(",");
+        double spawnPointX = Double.parseDouble(fields[1]);
+        double spawnPointY = Double.parseDouble(fields[2]);
+        double spawnPointZ = Double.parseDouble(fields[3]);
+        World spawnPointWorld = this.roboGames.getServer().getWorld(fields[0]);
+        return new Location(spawnPointWorld, spawnPointX, spawnPointY, spawnPointZ);
     }
 }

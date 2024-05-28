@@ -1,10 +1,7 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.model.SpawnPoint;
-import com.roboter5123.robogames.service.ConfigService;
-import com.roboter5123.robogames.service.GameService;
-import com.roboter5123.robogames.service.LanguageService;
-import com.roboter5123.robogames.service.SpawnService;
+import com.roboter5123.robogames.model.Arena;
+import com.roboter5123.robogames.service.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,12 +20,14 @@ public class SetSpawnListener implements Listener {
     private final SpawnService spawnService;
     private final ConfigService configService;
     private final GameService gameService;
+    private final ArenaService arenaService;
 
-    public SetSpawnListener(LanguageService languageService, SpawnService spawnService, ConfigService configService, GameService gameService) {
+    public SetSpawnListener(LanguageService languageService, SpawnService spawnService, ConfigService configService, GameService gameService, ArenaService arenaService) {
         this.languageService = languageService;
         this.spawnService = spawnService;
         this.configService = configService;
         this.gameService = gameService;
+        this.arenaService = arenaService;
     }
 
     @EventHandler
@@ -67,14 +66,29 @@ public class SetSpawnListener implements Listener {
     }
 
     private void addSpawnPoint(PlayerInteractEvent event, Player player) {
-        Location location = event.getClickedBlock().getLocation();
-        List<SpawnPoint> allSpawns = this.spawnService.getAllSpawns();
-        SpawnPoint newSpawnPoint = new SpawnPoint();
-        newSpawnPoint.setWorld(location.getWorld().getName());
-        newSpawnPoint.setLocation(location);
+        Location newSpawnPoint = event.getClickedBlock().getLocation();
+        newSpawnPoint.add(0.5, 1.5, 0.5);
+        List<Location> allSpawns = this.spawnService.getAllSpawns();
 
         if (allSpawns.contains(newSpawnPoint)) {
             player.sendMessage(this.languageService.getMessage("setspawnhandler.duplicate"));
+            return;
+        }
+
+        Arena arena = this.arenaService.getArena();
+
+        if (arena == null) {
+            player.sendMessage(this.languageService.getMessage("setspawnhandler.not-in-arena"));
+            return;
+        }
+
+        Location pos1 = arena.getPos1();
+        Location pos2 = arena.getPos2();
+        boolean isInXArenaBounds = newSpawnPoint.getX() >= Math.min(pos1.getX(), pos2.getX()) && newSpawnPoint.getX() <= Math.max(pos1.getX(), pos2.getX());
+        boolean isInYArenaBounds = newSpawnPoint.getY() >= Math.min(pos1.getY(), pos2.getY()) && newSpawnPoint.getY() <= Math.max(pos1.getY(), pos2.getY());
+        boolean isInZArenaBounds = newSpawnPoint.getZ() >= Math.min(pos1.getZ(), pos2.getZ()) && newSpawnPoint.getZ() <= Math.max(pos1.getZ(), pos2.getZ());
+        if (!isInXArenaBounds || !isInYArenaBounds || !isInZArenaBounds) {
+            player.sendMessage(this.languageService.getMessage("setspawnhandler.not-in-arena"));
             return;
         }
 
@@ -84,6 +98,6 @@ public class SetSpawnListener implements Listener {
         }
 
         this.spawnService.addSpawn(newSpawnPoint);
-        player.sendMessage(this.languageService.getMessage("setspawnhandler.position-set") + allSpawns.size() + this.languageService.getMessage("setspawnhandler.set-at") + location.getBlockX() + this.languageService.getMessage("setspawnhandler.coord-y") + location.getBlockY() + this.languageService.getMessage("setspawnhandler.coord-z") + location.getBlockZ());
+        player.sendMessage(this.languageService.getMessage("setspawnhandler.position-set") + allSpawns.size() + this.languageService.getMessage("setspawnhandler.set-at") + newSpawnPoint.getBlockX() + this.languageService.getMessage("setspawnhandler.coord-y") + newSpawnPoint.getBlockY() + this.languageService.getMessage("setspawnhandler.coord-z") + newSpawnPoint.getBlockZ());
     }
 }

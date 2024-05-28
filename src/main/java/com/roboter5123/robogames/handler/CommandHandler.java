@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
 
@@ -31,7 +30,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         this.arenaService = arenaService;
         this.gameService = gameService;
         this.schedulerService = schedulerService;
-        this.random = new Random();
     }
 
     @Override
@@ -68,37 +66,41 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         }
     }
 
-	@Nullable
-	@Override
-	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-		if (args.length == 1) {
-			List<String> completions = new ArrayList<>();
-			String[] commands = {"join", "leave", "start", "end", "create", "select", "setspawn"};
-			for (String cmd : commands) {
-				if (sender.hasPermission("robogames." + cmd)) {
-					completions.add(cmd);
-				}
-			}
-			return completions;
-		}
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+        if (args.length == 1) {
+            List<String> completions = new ArrayList<>();
+            String[] commands = {"join", "leave", "start", "end", "create", "select", "setspawn"};
+            for (String cmd : commands) {
+                if (sender.hasPermission("robogames." + cmd)) {
+                    completions.add(cmd);
+                }
+            }
+            return completions;
+        }
 
-		if (args[0].equalsIgnoreCase("border")) {
-			List<String> completions = new ArrayList<>();
-			if (args.length == 2) {
-				completions.add(this.languageService.getMessage("border.args-1"));
-			} else if (args.length == 3) {
-				completions.add(this.languageService.getMessage("border.args-2"));
-			} else if (args.length == 4) {
-				completions.add(this.languageService.getMessage("border.args-3"));
-			}
-			return completions;
-		}
-		return new ArrayList<>();
-	}
+        if (args[0].equalsIgnoreCase("border")) {
+            List<String> completions = new ArrayList<>();
+            if (args.length == 2) {
+                completions.add(this.languageService.getMessage("border.args-1"));
+            } else if (args.length == 3) {
+                completions.add(this.languageService.getMessage("border.args-2"));
+            } else if (args.length == 4) {
+                completions.add(this.languageService.getMessage("border.args-3"));
+            }
+            return completions;
+        }
+        return new ArrayList<>();
+    }
 
     private boolean endGame(Player player) {
-        if (!player.hasPermission("hungergames.end")){
+        if (!player.hasPermission("hungergames.end")) {
             player.sendMessage(this.languageService.getMessage("no-permission"));
+            return true;
+        }
+        if (this.gameService.isGameStarting() || !this.gameService.isGameStarted()) {
+            player.sendMessage(this.languageService.getMessage("endgame.not-started"));
             return true;
         }
         new EndGameCommand(this.gameService, this.spawnService, this.playerService).run();
@@ -106,11 +108,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private boolean startGame(Player player) {
-        if (!player.hasPermission("hungergames.start")){
+        if (!player.hasPermission("hungergames.start")) {
             player.sendMessage(this.languageService.getMessage("no-permission"));
             return true;
         }
-        new StartGameCommand(this.gameService, this.schedulerService, this. languageService, this.playerService).run();
+        new StartGameCommand(this.gameService, this.schedulerService, this.languageService, this.playerService, this.spawnService).run();
         return true;
     }
 

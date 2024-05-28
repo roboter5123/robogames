@@ -1,9 +1,9 @@
 package com.roboter5123.robogames.command;
 
-import com.roboter5123.robogames.model.SpawnPoint;
 import com.roboter5123.robogames.service.GameService;
 import com.roboter5123.robogames.service.LanguageService;
 import com.roboter5123.robogames.service.SpawnService;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +29,7 @@ public class SetSpawnCommand extends BukkitRunnable {
     @Override
     public void run() {
 
-        Map<Player, SpawnPoint> playerSpawnPoints = this.spawnService.getPlayerSpawnPoints();
+        Map<Player, Location> playerSpawnPoints = this.spawnService.getPlayerSpawnPoints();
         if (!playerSpawnPoints.isEmpty()) {
             player.sendMessage(this.languageService.getMessage("setspawn.game-not-empty"));
             return;

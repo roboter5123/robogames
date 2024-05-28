@@ -12,7 +12,7 @@ public class MetadataService {
         this.roboGames = roboGames;
     }
 
-    public void setMetaDataOnPlayer(Player player, String key, Object value){
+    public void setMetaDataOnPlayer(Player player, String key, Object value) {
         player.setMetadata(key, new FixedMetadataValue(roboGames, value));
     }
 }

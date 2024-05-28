@@ -42,7 +42,7 @@ public class LeaveGameCommand extends BukkitRunnable {
 
         World world = player.getWorld();
         Location worldSpawn = world.getSpawnLocation();
-        this.playerService.teleportPlayer(player, world, worldSpawn);
+        this.playerService.teleportPlayer(player, worldSpawn);
         player.sendMessage(this.languageService.getMessage("leave.success"));
     }
 

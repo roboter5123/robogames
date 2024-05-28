@@ -2,8 +2,6 @@ package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.model.GameState;
 
-import java.util.HashMap;
-
 public class GameService {
 
     private final GameState gameState;
@@ -12,7 +10,7 @@ public class GameService {
 
 
     public GameService() {
-        this.gameState = new GameState(false, false, new HashMap<>());
+        this.gameState = new GameState(false, false);
     }
 
     public boolean isGameStarted() {

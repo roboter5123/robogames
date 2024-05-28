@@ -46,9 +46,9 @@ join:
   success: "&cYou joined the game!"
 
 leave:
-    not-joined: "&cYou have not joined the game!"
-    game-is-starting: "&cCan not leave while the game is starting!"
-    success: "&cYou left the game!"
+  not-joined: "&cYou have not joined the game!"
+  game-is-starting: "&cCan not leave while the game is starting!"
+  success: "&cYou left the game!"
 
 scanarena:
   region-undef: "&cThe area region is not defined in the config."
@@ -138,6 +138,8 @@ setspawnhandler:
   joined-message-3: "/"
   joined-message-4: "]"
   spawn-filled: "&cAll spawn points are currently occupied!"
+  not-in-arena: "&cSpawnpoint not inside arena bounds"
+
 
 borderhandler:
   start-shrink: "&6The world border has started to shrink"

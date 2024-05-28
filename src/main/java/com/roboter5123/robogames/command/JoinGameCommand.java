@@ -1,11 +1,10 @@
 package com.roboter5123.robogames.command;
 
-import com.roboter5123.robogames.model.SpawnPoint;
 import com.roboter5123.robogames.service.*;
-import org.bukkit.World;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.Location;
 
 import java.util.List;
 import java.util.Random;
@@ -43,16 +42,14 @@ public class JoinGameCommand extends BukkitRunnable {
             return;
         }
 
-        List<SpawnPoint> freeSpawnPoints = this.spawnService.getSpawnFreePoints();
+        List<Location> freeSpawnPoints = this.spawnService.getSpawnFreePoints();
         if (freeSpawnPoints.isEmpty()) {
             player.sendMessage(languageService.getMessage("join.not-enough-spawns"));
             return;
         }
-        SpawnPoint spawnPoint = freeSpawnPoints.get(this.random.nextInt(0, freeSpawnPoints.size()));
+        Location spawnPoint = freeSpawnPoints.get(this.random.nextInt(0, freeSpawnPoints.size()));
         this.spawnService.setPlayerSpawn(player, spawnPoint);
-
-        World world = this.arenaService.getWorld(spawnPoint.getWorld());
-        this.playerService.teleportPlayer(player, world, spawnPoint.getLocation());
+        this.playerService.teleportPlayer(player, spawnPoint);
 
         this.playerService.addInGamePlayer(player);
         player.setGameMode(GameMode.ADVENTURE);

@@ -7,6 +7,8 @@ import com.roboter5123.robogames.listener.SetSpawnListener;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 public final class RoboGames extends JavaPlugin {
 
     private final SchedulerService schedulerService;
@@ -42,9 +44,9 @@ public final class RoboGames extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getCommand("robogames").setExecutor(new CommandHandler(this.languageService, this.playerService, this.spawnService, this.arenaService, this.gameService, this.schedulerService));
+        Objects.requireNonNull(getCommand("robogames")).setExecutor(new CommandHandler(this.languageService, this.playerService, this.spawnService, this.arenaService, this.gameService, this.schedulerService));
         getServer().getPluginManager().registerEvents(new SelectPosListener(this.languageService, this.metadataService), this);
-        getServer().getPluginManager().registerEvents(new SetSpawnListener(this.languageService, this.spawnService, this.configService, this.gameService), this);
+        getServer().getPluginManager().registerEvents(new SetSpawnListener(this.languageService, this.spawnService, this.configService, this.gameService, this.arenaService), this);
         getServer().getPluginManager().registerEvents(new MoveDisableListener(this.playerService, this.gameService, this.arenaService), this);
     }
 

@@ -2,7 +2,6 @@ package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -24,32 +23,32 @@ public class PlayerService {
         this.alivePlayers = new ArrayList<>();
     }
 
-    public List<Player> clearInGamePlayers(){
+    public List<Player> clearInGamePlayers() {
         List<Player> players = new ArrayList<>(inGamePlayers);
         this.inGamePlayers.clear();
         this.alivePlayers.clear();
         return players;
     }
 
-    public void addInGamePlayer(Player player){
+    public void addInGamePlayer(Player player) {
         this.inGamePlayers.add(player);
         this.alivePlayers.add(player);
     }
 
-    public List<Player> getInGamePlayers(){
+    public List<Player> getInGamePlayers() {
         return this.inGamePlayers;
     }
 
-    public List<Player> getAlivePlayers(){
+    public List<Player> getAlivePlayers() {
         return this.inGamePlayers;
     }
 
-    public List<Player> getOnlinePlayers(){
+    public List<Player> getOnlinePlayers() {
         Collection<? extends Player> onlinePlayers = roboGames.getServer().getOnlinePlayers();
         return new ArrayList<>(onlinePlayers);
     }
 
-    public void removeAlivePlayers(Player player){
+    public void removeAlivePlayers(Player player) {
         this.alivePlayers.remove(player);
     }
 

@@ -35,8 +35,7 @@ public class MoveDisableListener implements Listener {
 
         Location from = event.getFrom();
         Location to = event.getTo();
-
-        if (from.getX() == to.getX() || from.getZ() == to.getZ()) {
+        if (to.getX() == from.getX() && to.getZ() == from.getZ()) {
             return;
         }
 
@@ -46,7 +45,6 @@ public class MoveDisableListener implements Listener {
         boolean isInXArenaBounds = to.getX() >= Math.min(pos1.getX(), pos2.getX()) && to.getX() <= Math.max(pos1.getX(), pos2.getX());
         boolean isInYArenaBounds = to.getY() >= Math.min(pos1.getY(), pos2.getY()) && to.getY() <= Math.max(pos1.getY(), pos2.getY());
         boolean isInZArenaBounds = to.getZ() >= Math.min(pos1.getZ(), pos2.getZ()) && to.getZ() <= Math.max(pos1.getZ(), pos2.getZ());
-
         if (!isInXArenaBounds || !isInYArenaBounds || !isInZArenaBounds) {
             return;
         }
