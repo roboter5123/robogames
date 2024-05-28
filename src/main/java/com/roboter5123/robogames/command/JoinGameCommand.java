@@ -51,7 +51,7 @@ public class JoinGameCommand extends BukkitRunnable {
         this.spawnService.setPlayerSpawn(player, spawnPoint);
 
         World world = this.arenaService.getWorld(spawnPoint.getWorld());
-        this.playerService.teleportPlayer(player, world, spawnPoint.getCoordinate());
+        this.playerService.teleportPlayer(player, world, spawnPoint.getLocation());
 
         this.playerService.addInGamePlayer(player);
         player.setGameMode(GameMode.ADVENTURE);

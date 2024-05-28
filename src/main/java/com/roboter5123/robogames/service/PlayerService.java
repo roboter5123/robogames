@@ -1,7 +1,6 @@
 package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
-import com.roboter5123.robogames.model.Coordinate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -9,6 +8,8 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.xml.stream.Location;
 
 public class PlayerService {
 
@@ -53,8 +54,8 @@ public class PlayerService {
         this.alivePlayers.remove(player);
     }
 
-    public void teleportPlayer(Player player, World world, Coordinate coordinate) {
-        player.teleport(new Location(world, coordinate.getxCoordinate(), coordinate.getyCoordinate(), coordinate.getzCoordinate()));
+    public void teleportPlayer(Player player, Location location) {
+        player.teleport(location);
     }
 
     public void removeIngamePlayer(Player player) {

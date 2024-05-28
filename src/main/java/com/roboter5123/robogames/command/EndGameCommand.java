@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.stream.Location;
 
-import com.roboter5123.robogames.model.Coordinate;
 import com.roboter5123.robogames.service.GameService;
 import com.roboter5123.robogames.service.PlayerService;
 import com.roboter5123.robogames.service.SpawnService;
@@ -34,11 +33,8 @@ public class EndGameCommand extends BukkitRunnable {
 		for (Player inGamePlayer : inGamePlayers) {
 			inGamePlayer.setGameMode(GameMode.ADVENTURE);
 			World world = inGamePlayer.getWorld;
-			this.playerService.teleportPlayer(inGamePlayer, world, convertToCoordinate(world.getSpawnLocation()));
+			this.playerService.teleportPlayer(inGamePlayer, world, world.getSpawnLocation());
 		}
 	}
 
-	private Coordinate convertToCoordinate(Location location) {
-		// TODO Implement
-	}
 }

@@ -1,6 +1,5 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.model.Coordinate;
 import com.roboter5123.robogames.model.SpawnPoint;
 import com.roboter5123.robogames.service.ConfigService;
 import com.roboter5123.robogames.service.GameService;
@@ -72,11 +71,7 @@ public class SetSpawnListener implements Listener {
         List<SpawnPoint> allSpawns = this.spawnService.getAllSpawns();
         SpawnPoint newSpawnPoint = new SpawnPoint();
         newSpawnPoint.setWorld(location.getWorld().getName());
-        Coordinate newSpawnCoordinate = convertToSpawnPoint(location);
-        newSpawnCoordinate.setxCoordinate(newSpawnCoordinate.getxCoordinate() + 0.5);
-        newSpawnCoordinate.setyCoordinate(newSpawnCoordinate.getyCoordinate() + 1);
-        newSpawnCoordinate.setzCoordinate(newSpawnCoordinate.getzCoordinate() + 0.5);
-        newSpawnPoint.setCoordinate(newSpawnCoordinate);
+        newSpawnPoint.setLocation(location);
 
         if (allSpawns.contains(newSpawnPoint)) {
             player.sendMessage(this.languageService.getMessage("setspawnhandler.duplicate"));
@@ -90,13 +85,5 @@ public class SetSpawnListener implements Listener {
 
         this.spawnService.addSpawn(newSpawnPoint);
         player.sendMessage(this.languageService.getMessage("setspawnhandler.position-set") + allSpawns.size() + this.languageService.getMessage("setspawnhandler.set-at") + location.getBlockX() + this.languageService.getMessage("setspawnhandler.coord-y") + location.getBlockY() + this.languageService.getMessage("setspawnhandler.coord-z") + location.getBlockZ());
-    }
-
-    private Coordinate convertToSpawnPoint(Location location) {
-        Coordinate coordinate = new Coordinate();
-        coordinate.setxCoordinate(location.getX());
-        coordinate.setyCoordinate(location.getY());
-        coordinate.setzCoordinate(location.getZ());
-        return coordinate;
     }
 }

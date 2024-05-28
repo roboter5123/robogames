@@ -2,7 +2,6 @@ package com.roboter5123.robogames.listener;
 
 import javax.xml.stream.Location;
 
-import com.roboter5123.robogames.model.Coordinate;
 import com.roboter5123.robogames.service.LanguageService;
 import com.roboter5123.robogames.service.PlayerService;
 import com.roboter5123.robogames.service.SchedulerService;
@@ -45,9 +44,5 @@ public class PlayerKilledListener implements Listener {
 		String message = player.getDisplayName() + this.languageService.getMessage("death-message");
 		new BroadCastIngameTask(this.playerService, message).run();
 		event.cancel();
-	}
-
-	private Coordinate convertToCoordinate(Location location) {
-		// TODO Implement
 	}
 }
