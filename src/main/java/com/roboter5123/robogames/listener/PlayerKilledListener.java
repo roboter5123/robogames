@@ -8,6 +8,8 @@ import com.roboter5123.robogames.service.SchedulerService;
 import com.roboter5123.robogames.tasks.BroadCastIngameTask;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.player.EntityDamageEvent;
+import org.bukkit.event.EventHandler;
 
 public class PlayerKilledListener implements Listener {
 
