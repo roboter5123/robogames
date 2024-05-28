@@ -83,7 +83,7 @@ public class SpawnService {
 
     private String convertToString(SpawnPoint spawn) {
         Location location = spawn.getLocation();
-        return spawn.getWorld() + "," + location.getx() + "," + location.gety() + "," + location.getz();
+        return spawn.getWorld() + "," + location.getX() + "," + location.getY() + "," + location.getZ();
     }
 
     @NotNull

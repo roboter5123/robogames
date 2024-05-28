@@ -47,12 +47,12 @@ public class ArenaService {
         YamlConfiguration arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
 
         arenaConfig.set("region.world", arena.getWorld());
-        arenaConfig.set("region.pos1.x", arena.getPos1().getx());
-        arenaConfig.set("region.pos1.y", arena.getPos1().gety());
-        arenaConfig.set("region.pos1.z", arena.getPos1().getz());
-        arenaConfig.set("region.pos2.x", arena.getPos2().getx());
-        arenaConfig.set("region.pos2.y", arena.getPos2().gety());
-        arenaConfig.set("region.pos2.z", arena.getPos2().getz());
+        arenaConfig.set("region.pos1.x", arena.getPos1().getX());
+        arenaConfig.set("region.pos1.y", arena.getPos1().getY());
+        arenaConfig.set("region.pos1.z", arena.getPos1().getZ());
+        arenaConfig.set("region.pos2.x", arena.getPos2().getX());
+        arenaConfig.set("region.pos2.y", arena.getPos2().getY());
+        arenaConfig.set("region.pos2.z", arena.getPos2().getZ());
 
         try {
             arenaConfig.save(arenaFile);
