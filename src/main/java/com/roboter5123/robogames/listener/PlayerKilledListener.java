@@ -41,6 +41,12 @@ public class PlayerKilledListener implements Listener {
 		}
 
 		this.playerService.removeAlivePlayers(player);
+		for (ItemStack itemStack : player.getInventory()) {
+			if(itemStack == null){
+				continue;
+			}
+   			player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+		}
 		player.setGameMode(GameMode.SPECTATOR);
 		String message = player.getDisplayName() + this.languageService.getMessage("death-message");
 		new BroadCastIngameTask(this.playerService, message).run();
