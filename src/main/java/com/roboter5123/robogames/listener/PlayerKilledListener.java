@@ -7,6 +7,7 @@ import com.roboter5123.robogames.service.PlayerService;
 import com.roboter5123.robogames.service.SchedulerService;
 import com.roboter5123.robogames.tasks.BroadCastIngameTask;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerKilledListener implements Listener {
 
@@ -14,10 +15,9 @@ public class PlayerKilledListener implements Listener {
 
 	private final PlayerService playerService;
 
-	public PlayerKilledListener(LanguageService languageService, PlayerService playerService, SchedulerService schedulerService) {
+	public PlayerKilledListener(LanguageService languageService, PlayerService playerService) {
 		this.languageService = languageService;
 		this.playerService = playerService;
-		this.schedulerService = schedulerService;
 	}
 
 	@EventHandler
@@ -41,12 +41,6 @@ public class PlayerKilledListener implements Listener {
 		}
 
 		this.playerService.removeAlivePlayers(player);
-		for (ItemStack itemStack : player.getInventory()) {
-			if(itemStack == null){
-				continue;
-			}
-   			player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-		}
 		player.setGameMode(GameMode.SPECTATOR);
 		String message = player.getDisplayName() + this.languageService.getMessage("death-message");
 		new BroadCastIngameTask(this.playerService, message).run();
