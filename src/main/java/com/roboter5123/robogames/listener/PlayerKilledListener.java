@@ -1,41 +1,49 @@
-package com.roboter5123.robogames.command;
-
-import java.util.List;
+package com.roboter5123.robogames.listener;
 
 import org.bukkit.Location;
 
-import com.roboter5123.robogames.service.GameService;
+import com.roboter5123.robogames.service.LanguageService;
 import com.roboter5123.robogames.service.PlayerService;
-import com.roboter5123.robogames.service.SpawnService;
-
+import com.roboter5123.robogames.service.SchedulerService;
+import com.roboter5123.robogames.tasks.BroadCastIngameTask;
+import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.event.player.EntityDamageEvent;
 
-public class EndGameCommand extends BukkitRunnable {
+public class PlayerKilledListener implements Listener {
 
-	private final GameService gameService;
-	private final SpawnService spawnService;
+	private final LanguageService languageService;
+
 	private final PlayerService playerService;
 
-	public EndGameCommand(GameService gameService, SpawnService spawnService, PlayerService playerService) {
-		this.gameService = gameService;
-		this.spawnService = spawnService;
+	public PlayerKilledListener(LanguageService languageService, PlayerService playerService) {
+		this.languageService = languageService;
 		this.playerService = playerService;
 	}
 
-	@Override
-	public void run() {
-		this.gameService.setGameStarted(false);
-		this.gameService.setGameStarting(false);
-		this.spawnService.clearPlayerSpawns();
-		this.playerService.clearInGamePlayers();
+	@EventHandler
+	public void onEntityDamage(EntityDamageEvent event) {
 
-		List<Player> inGamePlayers = this.playerService.getInGamePlayers();
-		for (Player inGamePlayer : inGamePlayers) {
-			inGamePlayer.setGameMode(GameMode.ADVENTURE);
-			World world = inGamePlayer.getWorld;
-			this.playerService.teleportPlayer(inGamePlayer, world, world.getSpawnLocation());
+		if (!(event.getEntity instanceof Player player)) {
+			return;
 		}
-	}
 
+		if (!this.playerService.getInGamePlayers().contains(player)) {
+			return;
+		}
+
+		if (!this.playerService.getAlivePlayers().contains(player)) {
+			return;
+		}
+
+		double healthAfterDamage = player.getHealth() - event.getFinalDamage();
+		if (healthAfterDamage > 0) {
+			return;
+		}
+
+		this.playerService.removeAlivePlayers(player);
+		player.setGameMode(GameMode.SPECTATOR);
+		String message = player.getDisplayName() + this.languageService.getMessage("death-message");
+		new BroadCastIngameTask(this.playerService, message).run();
+		event.cancel();
+	}
 }
