@@ -9,6 +9,7 @@ usage: "Usage: /hg <subcommand> [args]"
 arena:
   stick-name: "&aArena Selector"
   save-error: "&cCould not save arena.yml to "
+  arena-exists: "&cArena name already taken!"
   stick-left: "&bLeft-click to select position 1"
   stick-right: "&bRight-click to select position 2"
   given-stick: "&aYou have been given an Arena Selector"
@@ -48,6 +49,7 @@ join:
 leave:
   not-joined: "&cYou have not joined the game!"
   game-is-starting: "&cCan not leave while the game is starting!"
+  broadcast: "&c has left the game!"
   success: "&cYou left the game!"
 
 scanarena:

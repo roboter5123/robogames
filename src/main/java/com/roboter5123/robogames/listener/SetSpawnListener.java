@@ -12,7 +12,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class SetSpawnListener implements Listener {
 
@@ -35,23 +37,22 @@ public class SetSpawnListener implements Listener {
         Player player = event.getPlayer();
         this.languageService.loadLanguageConfig(player);
         ItemStack item = event.getItem();
-
         if (item == null || item.getType() != Material.STICK || !item.hasItemMeta() || !item.getItemMeta().getDisplayName().equals(this.languageService.getMessage("setspawn.stick-name"))) {
             return;
         }
+        String arenaName = item.getItemMeta().getLore().getFirst();
 
-        if (!this.spawnService.getPlayerSpawnPoints().isEmpty()) {
+        if (!this.spawnService.getPlayerSpawns(arenaName).isEmpty()) {
             player.sendMessage(this.languageService.getMessage("setspawn.game-not-empty"));
             event.setCancelled(true);
             return;
         }
 
-        if (this.gameService.isGameStarted() || this.gameService.isGameStarting()) {
+        if (this.gameService.isGameStarted(arenaName) || this.gameService.isGameStarting(arenaName)) {
             player.sendMessage(this.languageService.getMessage("setspawn.game-in-progress"));
             event.setCancelled(true);
             return;
         }
-
 
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             addSpawnPoint(event, player);
@@ -68,17 +69,18 @@ public class SetSpawnListener implements Listener {
     private void addSpawnPoint(PlayerInteractEvent event, Player player) {
         Location newSpawnPoint = event.getClickedBlock().getLocation();
         newSpawnPoint.add(0.5, 1.5, 0.5);
-        List<Location> allSpawns = this.spawnService.getAllSpawns();
+        Optional<Arena> arenaOptional = this.arenaService.getArenaNames().stream()
+                .map(this.arenaService::getArena)
+                .filter(arena -> newSpawnPoint.getWorld().getName().equals(arena.getWorldName()))
+                .findFirst();
+        if (arenaOptional.isEmpty()) {
+            return;
+        }
+        Arena arena = arenaOptional.get();
+        List<Location> allSpawns = this.spawnService.getAllSpawns(arena.getName());
 
         if (allSpawns.contains(newSpawnPoint)) {
             player.sendMessage(this.languageService.getMessage("setspawnhandler.duplicate"));
-            return;
-        }
-
-        Arena arena = this.arenaService.getArena();
-
-        if (arena == null) {
-            player.sendMessage(this.languageService.getMessage("setspawnhandler.not-in-arena"));
             return;
         }
 
@@ -97,7 +99,11 @@ public class SetSpawnListener implements Listener {
             return;
         }
 
-        this.spawnService.addSpawn(newSpawnPoint);
+        try {
+            this.spawnService.createSpawn(arena.getName(), newSpawnPoint);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         player.sendMessage(this.languageService.getMessage("setspawnhandler.position-set") + allSpawns.size() + this.languageService.getMessage("setspawnhandler.set-at") + newSpawnPoint.getBlockX() + this.languageService.getMessage("setspawnhandler.coord-y") + newSpawnPoint.getBlockY() + this.languageService.getMessage("setspawnhandler.coord-z") + newSpawnPoint.getBlockZ());
     }
 }

@@ -4,10 +4,19 @@ import org.bukkit.Location;
 
 public class Arena {
 
+    private String name;
     private String worldName;
+    private String lobbyName;
     private Location pos1;
     private Location pos2;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getWorldName() {
         return worldName;
@@ -15,6 +24,14 @@ public class Arena {
 
     public void setWorldName(String world) {
         this.worldName = world;
+    }
+
+    public String getLobbyName() {
+        return lobbyName;
+    }
+
+    public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName;
     }
 
     public Location getPos1() {
@@ -37,7 +54,9 @@ public class Arena {
     public String toString() {
         // @formatter:off
         return "Arena{" +
-                "world='" + worldName + '\'' +
+                "name='" + name + '\'' +
+                "worldName='" + worldName + '\'' +
+                "lobbyName='" + lobbyName + '\'' +
                 ", pos1=" + pos1 +
                 ", pos2=" + pos2 +
                 '}';

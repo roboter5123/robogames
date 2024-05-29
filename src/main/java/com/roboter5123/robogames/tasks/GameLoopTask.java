@@ -15,46 +15,48 @@ public class GameLoopTask extends BukkitRunnable {
     private final LanguageService languageService;
     private final SpawnService spawnService;
     private final Long intervalTicks;
+    private final String arenaName;
 
-    public GameLoopTask(GameService gameService, PlayerService playerService, SpawnService spawnService, LanguageService languageService, Long tickInterval) {
+    public GameLoopTask(GameService gameService, PlayerService playerService, SpawnService spawnService, LanguageService languageService, Long tickInterval, String arenaName) {
         this.gameService = gameService;
         this.playerService = playerService;
         this.spawnService = spawnService;
         this.intervalTicks = tickInterval;
         this.languageService = languageService;
+        this.arenaName = arenaName;
     }
 
     @Override
     public void run() {
-        if (!this.gameService.isGameStarted()) {
+        if (!this.gameService.isGameStarted(arenaName)) {
             cancel();
             return;
         }
 
-        if (this.playerService.getAlivePlayers().size() == 1) {
+        if (this.playerService.getAlivePlayers(arenaName).size() == 1) {
             endGameWithWinner();
             return;
         }
 
-        if (this.playerService.getAlivePlayers().isEmpty()) {
+        if (this.playerService.getAlivePlayers(arenaName).isEmpty()) {
             endGameWithoutWinner();
             return;
         }
 
-        long timerTicks = this.gameService.getTimer() + this.intervalTicks;
-        this.gameService.setTimerTicks(timerTicks);
+        long timerTicks = this.gameService.getTimer(arenaName) + this.intervalTicks;
+        this.gameService.setTimerTicks(arenaName,timerTicks);
     }
 
     private void endGameWithWinner() {
-        Player winner = this.playerService.getAlivePlayers().get(0);
-        String message = winner.getDisplayName() + this.languageService.getMessage("game.winner-text");
-        new BroadCastIngameTask(this.playerService, message).run();
-        new EndGameCommand(this.gameService, this.spawnService, this.playerService).run();
+        Player winner = this.playerService.getAlivePlayers(arenaName).get(0);
+        String message = winner.getName() + this.languageService.getMessage("game.winner-text");
+        new BroadCastIngameTask(this.playerService, message, this.arenaName).run();
+        new EndGameCommand(this.gameService, this.spawnService, this.playerService, this.arenaName).run();
         cancel();
     }
 
     private void endGameWithoutWinner() {
-        new EndGameCommand(this.gameService, this.spawnService, this.playerService).run();
+        new EndGameCommand(this.gameService, this.spawnService, this.playerService, this.arenaName).run();
         cancel();
     }
 }

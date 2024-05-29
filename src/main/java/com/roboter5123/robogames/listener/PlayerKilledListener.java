@@ -27,11 +27,13 @@ public class PlayerKilledListener implements Listener {
             return;
         }
 
-        if (!this.playerService.getInGamePlayers().contains(player)) {
+        String arenaName = this.playerService.getArenaNameByPlayer(player);
+
+        if (!this.playerService.getInGamePlayers(arenaName).contains(player)) {
             return;
         }
 
-        if (!this.playerService.getAlivePlayers().contains(player)) {
+        if (!this.playerService.getAlivePlayers(arenaName).contains(player)) {
             return;
         }
 
@@ -40,10 +42,11 @@ public class PlayerKilledListener implements Listener {
             return;
         }
 
-        this.playerService.removeAlivePlayers(player);
+        this.playerService.removeAlivePlayer(arenaName, player);
         player.setGameMode(GameMode.SPECTATOR);
-        String message = player.getDisplayName() + this.languageService.getMessage("death-message");
-        new BroadCastIngameTask(this.playerService, message).run();
+        player.setHealth(20);
+        String message = player.getName() + this.languageService.getMessage("death-message");
+        new BroadCastIngameTask(this.playerService, message, arenaName).run();
         event.setCancelled(true);
     }
 }

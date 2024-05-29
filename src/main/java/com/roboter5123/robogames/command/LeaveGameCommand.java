@@ -1,9 +1,7 @@
 package com.roboter5123.robogames.command;
 
-import com.roboter5123.robogames.service.GameService;
-import com.roboter5123.robogames.service.LanguageService;
-import com.roboter5123.robogames.service.PlayerService;
-import com.roboter5123.robogames.service.SpawnService;
+import com.roboter5123.robogames.service.*;
+import com.roboter5123.robogames.tasks.BroadCastIngameTask;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -17,33 +15,47 @@ public class LeaveGameCommand extends BukkitRunnable {
     private final GameService gameService;
     private final PlayerService playerService;
     private final SpawnService spawnService;
+    private final ArenaService arenaService;
+    private final LobbyService lobbyService;
 
-    public LeaveGameCommand(Player player, LanguageService languageService, GameService gameService, PlayerService playerService, SpawnService spawnService) {
+    public LeaveGameCommand(Player player, LanguageService languageService, GameService gameService, PlayerService playerService, SpawnService spawnService, ArenaService arenaService, LobbyService lobbyService) {
         this.player = player;
         this.languageService = languageService;
         this.gameService = gameService;
         this.playerService = playerService;
         this.spawnService = spawnService;
+        this.arenaService = arenaService;
+        this.lobbyService = lobbyService;
     }
 
     @Override
     public void run() {
-        if (this.gameService.isGameStarting()) {
-            player.sendMessage(languageService.getMessage("leave.game-is-starting"));
+
+        String arenaName = this.playerService.getArenaNameByPlayer(this.player);
+
+        if (this.gameService.isGameStarting(arenaName)) {
+            player.sendMessage(this.languageService.getMessage("leave.game-is-starting"));
             return;
         }
 
-        if (!playerService.getInGamePlayers().contains(player)) {
-            player.sendMessage(languageService.getMessage("leave.not-joined"));
+        if (!playerService.getInGamePlayers(arenaName).contains(player)) {
+            player.sendMessage(this.languageService.getMessage("leave.not-joined"));
             return;
         }
-        this.spawnService.removePlayerSpawnPoint(player);
-        this.playerService.removeIngamePlayer(player);
 
-        World world = player.getWorld();
-        Location worldSpawn = world.getSpawnLocation();
-        this.playerService.teleportPlayer(player, worldSpawn);
+        this.spawnService.removePlayerSpawnPoint(arenaName, player);
+        this.playerService.removeIngamePlayer(arenaName, player);
+
+        if (this.arenaService.getArena(arenaName).getLobbyName() != null) {
+            Location lobby = this.lobbyService.getLobby(arenaName);
+            player.teleport(lobby);
+        }else {
+            World world = player.getWorld();
+            Location worldSpawn = world.getSpawnLocation();
+            player.teleport(worldSpawn);
+        }
         player.sendMessage(this.languageService.getMessage("leave.success"));
+        new BroadCastIngameTask(this.playerService, this.languageService.getMessage("leave.broadcast"), arenaName).run();
     }
 
 }

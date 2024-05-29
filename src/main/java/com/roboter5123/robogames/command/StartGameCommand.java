@@ -12,19 +12,21 @@ public class StartGameCommand extends BukkitRunnable {
     private final LanguageService languageService;
     private final PlayerService playerService;
     private final SpawnService spawnService;
+    private final String arenaName;
 
-    public StartGameCommand(GameService gameService, SchedulerService schedulerService, LanguageService languageService, PlayerService playerService, SpawnService spawnService) {
+    public StartGameCommand(GameService gameService, SchedulerService schedulerService, LanguageService languageService, PlayerService playerService, SpawnService spawnService, String arenaName) {
         this.gameService = gameService;
         this.schedulerService = schedulerService;
         this.languageService = languageService;
         this.playerService = playerService;
         this.spawnService = spawnService;
+        this.arenaName = arenaName;
     }
 
     @Override
     public void run() {
-        this.gameService.setGameStarting(true);
-        this.gameService.setTimerTicks(0L);
+        this.gameService.setGameStarting(arenaName, true);
+        this.gameService.setTimerTicks(arenaName, 0L);
 
         broadcastCountdown("startgame.20-s", 0L);
         broadcastCountdown("startgame.15-s", 20L * 5);
@@ -36,22 +38,21 @@ public class StartGameCommand extends BukkitRunnable {
         broadcastCountdown("startgame.1-s", 20L * 19);
         broadcastCountdown("game.game-start", 20L * 20);
 
-        GameService gameService = this.gameService;
         BukkitRunnable startGameTask = new BukkitRunnable() {
             public void run() {
-                gameService.setGameStarted(true);
-                gameService.setGameStarting(false);
+                gameService.setGameStarted(arenaName, true);
+                gameService.setGameStarting(arenaName, false);
             }
         };
         this.schedulerService.scheduleDelayedTask(startGameTask, 20L * 20);
 
-        BukkitRunnable gameCheckTask = new GameLoopTask(gameService, playerService, spawnService, languageService, 20L);
+        BukkitRunnable gameCheckTask = new GameLoopTask(gameService, playerService, spawnService, languageService, 20L, arenaName);
         this.schedulerService.scheduleRepeatingTask(gameCheckTask, 20L * 20 + 2, 20L);
     }
 
     private void broadcastCountdown(String messageKey, long ticksUntil) {
         String message = languageService.getMessage(messageKey);
-        BukkitRunnable gameStartsInTask = new BroadCastIngameTask(this.playerService, message);
+        BukkitRunnable gameStartsInTask = new BroadCastIngameTask(this.playerService, message, this.arenaName);
         this.schedulerService.scheduleDelayedTask(gameStartsInTask, ticksUntil);
     }
 }

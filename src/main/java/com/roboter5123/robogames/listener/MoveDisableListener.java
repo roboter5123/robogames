@@ -25,11 +25,14 @@ public class MoveDisableListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+
         Player player = event.getPlayer();
-        if (this.gameService.isGameStarted()) {
+        String arenaName = this.playerService.getArenaNameByPlayer(player);
+        if (arenaName == null) {
             return;
         }
-        if (!this.playerService.getInGamePlayers().contains(player)) {
+
+        if (this.gameService.isGameStarted(arenaName)) {
             return;
         }
 
@@ -39,12 +42,13 @@ public class MoveDisableListener implements Listener {
             return;
         }
 
-        Arena arena = this.arenaService.getArena();
+        Arena arena = this.arenaService.getArena(arenaName);
         Location pos1 = arena.getPos1();
         Location pos2 = arena.getPos2();
         boolean isInXArenaBounds = to.getX() >= Math.min(pos1.getX(), pos2.getX()) && to.getX() <= Math.max(pos1.getX(), pos2.getX());
         boolean isInYArenaBounds = to.getY() >= Math.min(pos1.getY(), pos2.getY()) && to.getY() <= Math.max(pos1.getY(), pos2.getY());
         boolean isInZArenaBounds = to.getZ() >= Math.min(pos1.getZ(), pos2.getZ()) && to.getZ() <= Math.max(pos1.getZ(), pos2.getZ());
+
         if (!isInXArenaBounds || !isInYArenaBounds || !isInZArenaBounds) {
             return;
         }

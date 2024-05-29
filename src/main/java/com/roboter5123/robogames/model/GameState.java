@@ -5,9 +5,12 @@ public class GameState {
     private boolean gameStarted;
     private boolean gameStarting;
 
+    private Long timer;
+
     public GameState(boolean gameStarted, boolean gameStarting) {
         this.gameStarted = gameStarted;
         this.gameStarting = gameStarting;
+        this.timer = 0L;
     }
 
     public boolean isGameStarted() {
@@ -24,5 +27,13 @@ public class GameState {
 
     public void setGameStarting(boolean gameStarting) {
         this.gameStarting = gameStarting;
+    }
+
+    public Long getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Long timer) {
+        this.timer = timer;
     }
 }

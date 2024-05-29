@@ -6,40 +6,28 @@ commands:
   robogames:
     description: "Main command for RoboGames"
     usage: /<command> <subcommand> [args]
+  arena:
+    description: "Main command for editing RoboGames arenas"
+    usage: /<command> <subcommand> [args]
 permissions:
-  robogames.join:
+  robogames.game.join:
     description: "Allows you to join the game in roboGames"
     default: true
-  robogames.select:
-    description: "Allows you to select an arena in roboGames"
-    default: op
-  robogames.create:
-    description: "Allows you to create an arena in roboGames"
-    default: op
-  robogames.chestrefill:
-    description: "Allows you to refill chests in roboGames"
-    default: op
-  robogames.supplydrop:
-    description: "Allows you to drop a supply crate in roboGames"
-    default: op
-  robogames.setspawn:
-    description: "Allows you to set spawnpoints for arenas in roboGames"
-    default: op
-  robogames.start:
+  robogames.game.leave:
+    description: "Allows you to join the game in roboGames"
+    default: true
+  robogames.game.start:
     description: "Allows you to start the game in roboGames"
     default: op
-  robogames.end:
+  robogames.game.end:
     description: "Allows you to forcefully end the game in roboGames"
     default: op
-  robogames.scanarena:
-    description: "Allows you to scan the arena for chests in roboGames"
+  robogames.arena.select:
+    description: "Allows you to select an arena in roboGames"
     default: op
-  robogames.border:
-    description: "Allows you to change the world border in roboGames"
+  robogames.arena.create:
+    description: "Allows you to create an arena in roboGames"
     default: op
-  robogames.spectate:
-    description: "Allows you to spectate players in roboGames"
-    default: true
-  robogames.reloadconfig:
-    description: "Allows you to reload the config file for roboGames"
+  robogames.arena.setspawn:
+    description: "Allows you to set spawnpoints for arenas in roboGames"
     default: op
