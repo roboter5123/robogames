@@ -11,7 +11,6 @@ public class LeaveGameCommand extends BukkitRunnable {
 
     private final Player player;
     private final LanguageService languageService;
-
     private final GameService gameService;
     private final PlayerService playerService;
     private final SpawnService spawnService;

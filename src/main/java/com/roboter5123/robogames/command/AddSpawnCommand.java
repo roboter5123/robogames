@@ -50,7 +50,7 @@ public class AddSpawnCommand extends BukkitRunnable {
             return;
         }
 
-        if (this.arenaService.isInArenaBounds(arena.getName(), newSpawnPoint)) {
+        if (!this.arenaService.isInArenaBounds(arena.getName(), newSpawnPoint)) {
             player.sendMessage(this.languageService.getMessage("setspawnhandler.not-in-arena"));
             return;
         }

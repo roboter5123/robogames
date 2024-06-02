@@ -41,7 +41,7 @@ public class MoveDisableListener implements Listener {
             return;
         }
 
-        if (this.arenaService.isInArenaBounds(arenaName, to)) {
+        if (!this.arenaService.isInArenaBounds(arenaName, to)) {
             return;
         }
 

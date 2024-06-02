@@ -2,11 +2,9 @@ package com.roboter5123.robogames.handler;
 
 import com.roboter5123.robogames.command.CreateArenaCommand;
 import com.roboter5123.robogames.command.GiveWandCommand;
+import com.roboter5123.robogames.command.ScanArenaCommand;
 import com.roboter5123.robogames.command.SetSpawnCommand;
-import com.roboter5123.robogames.service.ArenaService;
-import com.roboter5123.robogames.service.GameService;
-import com.roboter5123.robogames.service.LanguageService;
-import com.roboter5123.robogames.service.SpawnService;
+import com.roboter5123.robogames.service.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,12 +22,16 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
     private final ArenaService arenaService;
     private final SpawnService spawnService;
     private final GameService gameService;
+    private final ChestService chestService;
+    private final WorldService worldService;
 
-    public ArenaCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService) {
+    public ArenaCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, ChestService chestService, WorldService worldService) {
         this.languageService = languageService;
         this.arenaService = arenaService;
         this.spawnService = spawnService;
         this.gameService = gameService;
+        this.chestService = chestService;
+        this.worldService = worldService;
     }
 
     @Override
@@ -48,11 +50,21 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
             case "wand" -> giveWand(player);
             case "create" -> createArena(player, args[1]);
             case "setspawn" -> setSpawn(player, args[1]);
+            case "scan" -> scanArena(player, args[1]);
             default -> {
                 commandSender.sendMessage(this.languageService.getMessage("unknown-subcommand") + args[0]);
                 yield false;
             }
         };
+    }
+
+    private boolean scanArena(Player player, String arenaName) {
+        if (!player.hasPermission("robogames.arena.scan")) {
+            player.sendMessage(this.languageService.getMessage(""));
+            return true;
+        }
+        new ScanArenaCommand(player, this.languageService, this.arenaService, this.chestService, this.worldService, arenaName).run();
+        return true;
     }
 
     private boolean giveWand(Player player) {

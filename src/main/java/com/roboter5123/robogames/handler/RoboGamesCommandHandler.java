@@ -25,9 +25,12 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
     private final SchedulerService schedulerService;
     private final ArenaService arenaService;
     private final LobbyService lobbyService;
+    private final ChestService chestService;
+    private final WorldService worldService;
+    private final ItemService itemService;
 
 
-    public RoboGamesCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, PlayerService playerService, SchedulerService schedulerService, LobbyService lobbyService) {
+    public RoboGamesCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, PlayerService playerService, SchedulerService schedulerService, LobbyService lobbyService, ChestService chestService, WorldService worldService, ItemService itemService) {
         this.languageService = languageService;
         this.gameService = gameService;
         this.spawnService = spawnService;
@@ -35,6 +38,9 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
         this.schedulerService = schedulerService;
         this.arenaService = arenaService;
         this.lobbyService = lobbyService;
+        this.chestService = chestService;
+        this.worldService = worldService;
+        this.itemService = itemService;
     }
 
     @Override
@@ -98,7 +104,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageService.getMessage("no-permission"));
             return true;
         }
-        new StartGameCommand(this.gameService, this.schedulerService, this.languageService, this.playerService, this.spawnService, arenaName).run();
+        new StartGameCommand(this.gameService, this.schedulerService, this.languageService, this.playerService, this.spawnService, this.chestService, this.worldService, this.arenaService, this.itemService, arenaName).run();
         return true;
     }
 
