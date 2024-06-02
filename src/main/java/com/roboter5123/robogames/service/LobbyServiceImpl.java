@@ -5,27 +5,30 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class LobbyServiceImpl implements LobbyService{
 
     private final RoboGames roboGames;
+    private final ConfigService configService;
     private final Map<String, Location> lobbies;
-    private static final String SPAWNS_FILE_NAME = "lobbies.yml";
+    private static final String LOBBIES_FILE_NAME = "lobbies.yml";
 
 
-    public LobbyServiceImpl(RoboGames roboGames) {
+    public LobbyServiceImpl(RoboGames roboGames, ConfigService configService) {
         this.roboGames = roboGames;
+        this.configService = configService;
         this.lobbies = new HashMap<>();
     }
 
     public void loadLobbiesConfig() {
         this.lobbies.clear();
-        File lobbiesFile = loadLobbiesFile();
+        File lobbiesFile = this.configService.loadConfigFile(LOBBIES_FILE_NAME);
         YamlConfiguration lobbiesConfig = YamlConfiguration.loadConfiguration(lobbiesFile);
         Set<String> lobbyNames = lobbiesConfig.getConfigurationSection("").getKeys(false);
         for (String lobbyName : lobbyNames) {
@@ -41,23 +44,12 @@ public class LobbyServiceImpl implements LobbyService{
         return this.lobbies.get(arenaName);
     }
     public void createLobby(String lobbyName, Location lobby) throws IOException {
-        File lobbiesFile = loadLobbiesFile();
+        File lobbiesFile = this.configService.loadConfigFile(LOBBIES_FILE_NAME);
         YamlConfiguration lobbiesConfig = YamlConfiguration.loadConfiguration(lobbiesFile);
         ConfigurationSection configSection = convertToConfigurationSection(lobby);
         lobbiesConfig.set(lobbyName, configSection);
         lobbiesConfig.save(lobbiesFile);
         this.lobbies.put(lobbyName, lobby);
-    }
-
-    @NotNull
-    private File loadLobbiesFile() {
-        File spawnsFile = new File(this.roboGames.getDataFolder(), SPAWNS_FILE_NAME);
-        if (!spawnsFile.exists()) {
-            spawnsFile.getParentFile().mkdirs();
-            this.roboGames.saveResource(SPAWNS_FILE_NAME, false);
-            return new File(this.roboGames.getDataFolder(), SPAWNS_FILE_NAME);
-        }
-        return spawnsFile;
     }
 
     private ConfigurationSection convertToConfigurationSection(Location location) {

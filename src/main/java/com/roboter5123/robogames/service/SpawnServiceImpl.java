@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +18,12 @@ public class SpawnServiceImpl implements SpawnService {
 
     private final Map<String, List<Location>> freeSpawnPoints;
     private static final String SPAWNS_FILE_NAME = "spawns.yml";
+    private final ConfigService configService;
 
 
-    public SpawnServiceImpl(RoboGames roboGames) {
+    public SpawnServiceImpl(RoboGames roboGames, ConfigService configService) {
         this.roboGames = roboGames;
+        this.configService = configService;
         this.spawns = new HashMap<>();
         this.playerSpawns = new HashMap<>();
         this.freeSpawnPoints = new HashMap<>();
@@ -30,7 +31,7 @@ public class SpawnServiceImpl implements SpawnService {
 
     public void loadSpawnConfig() {
         this.spawns.clear();
-        File spawnFile = loadSpawnFile();
+        File spawnFile = this.configService.loadConfigFile(SPAWNS_FILE_NAME);
         YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
         Set<String> arenaNames = spawnConfig.getConfigurationSection("").getKeys(false);
         for (String arenaName : arenaNames) {
@@ -46,11 +47,7 @@ public class SpawnServiceImpl implements SpawnService {
     }
 
     public List<Location> getAllSpawns(String arenaName) {
-        if (!this.spawns.containsKey(arenaName)) {
-            this.spawns.put(arenaName, new ArrayList<>());
-            this.freeSpawnPoints.put(arenaName, new ArrayList<>());
-            this.playerSpawns.put(arenaName, new HashMap<>());
-        }
+        spawnGuard(arenaName);
         return this.spawns.get(arenaName);
     }
 
@@ -66,7 +63,7 @@ public class SpawnServiceImpl implements SpawnService {
             locations.add(spawn);
             this.freeSpawnPoints.get(arenaName).add(spawn);
         }
-        File spawnFile = loadSpawnFile();
+        File spawnFile = this.configService.loadConfigFile(SPAWNS_FILE_NAME);
         YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
         List<Map<String, String>> yamlSpawns = this.spawns.get(arenaName).stream().map(this::convertToYaml).toList();
         roboGames.getServer().getLogger().info(yamlSpawns.toString());
@@ -85,7 +82,7 @@ public class SpawnServiceImpl implements SpawnService {
         if (this.freeSpawnPoints.containsKey(arenaName)) {
             this.freeSpawnPoints.get(arenaName).clear();
         }
-        File spawnFile = loadSpawnFile();
+        File spawnFile = this.configService.loadConfigFile(SPAWNS_FILE_NAME);
         YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
         if (spawnConfig.contains(arenaName)) {
             spawnConfig.set(arenaName, null);
@@ -94,9 +91,7 @@ public class SpawnServiceImpl implements SpawnService {
     }
 
     public Map<Player, Location> getPlayerSpawns(String arena) {
-        if (!playerSpawns.containsKey(arena)) {
-            this.playerSpawns.put(arena, new HashMap<>());
-        }
+        playerSpawnsGuard(arena);
         return this.playerSpawns.get(arena);
     }
 
@@ -114,6 +109,20 @@ public class SpawnServiceImpl implements SpawnService {
         this.playerSpawns.get(arenaName).clear();
     }
 
+    private void playerSpawnsGuard(String arena) {
+        if (!playerSpawns.containsKey(arena)) {
+            this.playerSpawns.put(arena, new HashMap<>());
+        }
+    }
+
+    private void spawnGuard(String arenaName) {
+        if (!this.spawns.containsKey(arenaName)) {
+            this.spawns.put(arenaName, new ArrayList<>());
+            this.freeSpawnPoints.put(arenaName, new ArrayList<>());
+            this.playerSpawns.put(arenaName, new HashMap<>());
+        }
+    }
+
     private Map<String, String> convertToYaml(Location location) {
         Map<String, String> map = new HashMap<>();
         map.put("world", location.getWorld().getName());
@@ -125,17 +134,6 @@ public class SpawnServiceImpl implements SpawnService {
 
     public List<Location> getSpawnFreePoints(String arenaName) {
         return this.freeSpawnPoints.get(arenaName);
-    }
-
-    @NotNull
-    private File loadSpawnFile() {
-        File spawnsFile = new File(this.roboGames.getDataFolder(), SPAWNS_FILE_NAME);
-        if (!spawnsFile.exists()) {
-            spawnsFile.getParentFile().mkdirs();
-            this.roboGames.saveResource(SPAWNS_FILE_NAME, false);
-            return new File(this.roboGames.getDataFolder(), SPAWNS_FILE_NAME);
-        }
-        return spawnsFile;
     }
 
     private Location convertToLocation(Map<?, ?> map) {

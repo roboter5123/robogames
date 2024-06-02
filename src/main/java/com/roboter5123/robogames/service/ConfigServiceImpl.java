@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class ConfigServiceImpl implements ConfigService{
 
@@ -16,10 +17,6 @@ public class ConfigServiceImpl implements ConfigService{
 
     public ConfigServiceImpl(RoboGames roboGames) {
         this.roboGames = roboGames;
-    }
-
-    public void reloadConfig() {
-        this.roboGames.reloadConfig();
     }
 
     public void checkConfigKeys() {
@@ -31,7 +28,7 @@ public class ConfigServiceImpl implements ConfigService{
         for (String key : keys) {
             if (!serverConfig.contains(key)) {
                 serverConfig.set(key, pluginConfig.get(key));
-                this.roboGames.getLogger().warning("&cMissing key: " + key);
+                this.roboGames.getLogger().log(Level.WARNING,"&cMissing key: {}", key);
             }
         }
 
@@ -49,5 +46,16 @@ public class ConfigServiceImpl implements ConfigService{
 
     public int getMaxPlayers() {
         return getConfig().getInt("max-players");
+    }
+
+    @Override
+    public File loadConfigFile(String fileName) {
+        File configFile = new File(this.roboGames.getDataFolder(), fileName);
+        if (configFile.exists()) {
+            return configFile;
+        }
+        configFile.getParentFile().mkdirs();
+        this.roboGames.saveResource(fileName, false);
+        return new File(this.roboGames.getDataFolder(), fileName);
     }
 }

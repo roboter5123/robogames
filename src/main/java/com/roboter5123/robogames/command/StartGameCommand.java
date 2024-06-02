@@ -25,6 +25,7 @@ public class StartGameCommand extends BukkitRunnable {
 
     @Override
     public void run() {
+
         this.gameService.setGameStarting(arenaName, true);
         this.gameService.setTimerTicks(arenaName, 0L);
 

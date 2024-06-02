@@ -33,6 +33,11 @@ public class LeaveGameCommand extends BukkitRunnable {
 
         String arenaName = this.playerService.getArenaNameByPlayer(this.player);
 
+        if (arenaName == null){
+            player.sendMessage(this.languageService.getMessage("leave.not-joined"));
+            return;
+        }
+
         if (this.gameService.isGameStarting(arenaName)) {
             player.sendMessage(this.languageService.getMessage("leave.game-is-starting"));
             return;

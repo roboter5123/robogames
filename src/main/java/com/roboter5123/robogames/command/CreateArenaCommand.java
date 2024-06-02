@@ -38,6 +38,13 @@ public class CreateArenaCommand extends BukkitRunnable {
             player.sendMessage(this.languageService.getMessage("arena.invalid-values"));
             return;
         }
+
+        if (this.arenaService.getArenaNames().contains(this.arenaName)){
+            player.sendMessage(this.languageService.getMessage("arena.arena-exists"));
+            return;
+        }
+
+
         Arena arena = new Arena();
         arena.setName(this.arenaName);
         arena.setWorldName(player.getWorld().getName());

@@ -1,8 +1,7 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.model.Arena;
+import com.roboter5123.robogames.command.AddSpawnCommand;
 import com.roboter5123.robogames.service.*;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,10 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 public class SetSpawnListener implements Listener {
 
@@ -69,41 +64,6 @@ public class SetSpawnListener implements Listener {
     private void addSpawnPoint(PlayerInteractEvent event, Player player) {
         Location newSpawnPoint = event.getClickedBlock().getLocation();
         newSpawnPoint.add(0.5, 1.5, 0.5);
-        Optional<Arena> arenaOptional = this.arenaService.getArenaNames().stream()
-                .map(this.arenaService::getArena)
-                .filter(arena -> newSpawnPoint.getWorld().getName().equals(arena.getWorldName()))
-                .findFirst();
-        if (arenaOptional.isEmpty()) {
-            return;
-        }
-        Arena arena = arenaOptional.get();
-        List<Location> allSpawns = this.spawnService.getAllSpawns(arena.getName());
-
-        if (allSpawns.contains(newSpawnPoint)) {
-            player.sendMessage(this.languageService.getMessage("setspawnhandler.duplicate"));
-            return;
-        }
-
-        Location pos1 = arena.getPos1();
-        Location pos2 = arena.getPos2();
-        boolean isInXArenaBounds = newSpawnPoint.getX() >= Math.min(pos1.getX(), pos2.getX()) && newSpawnPoint.getX() <= Math.max(pos1.getX(), pos2.getX());
-        boolean isInYArenaBounds = newSpawnPoint.getY() >= Math.min(pos1.getY(), pos2.getY()) && newSpawnPoint.getY() <= Math.max(pos1.getY(), pos2.getY());
-        boolean isInZArenaBounds = newSpawnPoint.getZ() >= Math.min(pos1.getZ(), pos2.getZ()) && newSpawnPoint.getZ() <= Math.max(pos1.getZ(), pos2.getZ());
-        if (!isInXArenaBounds || !isInYArenaBounds || !isInZArenaBounds) {
-            player.sendMessage(this.languageService.getMessage("setspawnhandler.not-in-arena"));
-            return;
-        }
-
-        if (allSpawns.size() == this.configService.getMaxPlayers()) {
-            player.sendMessage(ChatColor.RED + this.languageService.getMessage("setspawnhandler.max-spawn"));
-            return;
-        }
-
-        try {
-            this.spawnService.createSpawn(arena.getName(), newSpawnPoint);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        player.sendMessage(this.languageService.getMessage("setspawnhandler.position-set") + allSpawns.size() + this.languageService.getMessage("setspawnhandler.set-at") + newSpawnPoint.getBlockX() + this.languageService.getMessage("setspawnhandler.coord-y") + newSpawnPoint.getBlockY() + this.languageService.getMessage("setspawnhandler.coord-z") + newSpawnPoint.getBlockZ());
+        new AddSpawnCommand(player, this.languageService, this.arenaService, this.configService, this.spawnService, newSpawnPoint).run();
     }
 }

@@ -31,6 +31,12 @@ public class JoinGameCommand extends BukkitRunnable {
 
     @Override
     public void run() {
+
+        if (this.arenaName == null){
+            player.sendMessage(this.languageService.getMessage("join.arena-doesnt-exist"));
+            return;
+        }
+
         if (this.gameService.isGameStarted(this.arenaName) || this.gameService.isGameStarting(this.arenaName)) {
             player.sendMessage(this.languageService.getMessage("join.game-started"));
             return;
@@ -52,6 +58,8 @@ public class JoinGameCommand extends BukkitRunnable {
 
         this.playerService.addInGamePlayer(this.arenaName, player);
         player.setGameMode(GameMode.ADVENTURE);
+        player.setHealth(player.getMaxHealth());
+        player.setFoodLevel(20);
         player.getInventory().clear();
         player.sendMessage(this.languageService.getMessage("join.success"));
     }

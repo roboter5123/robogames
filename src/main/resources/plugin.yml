@@ -22,7 +22,7 @@ permissions:
   robogames.game.end:
     description: "Allows you to forcefully end the game in roboGames"
     default: op
-  robogames.arena.select:
+  robogames.arena.wand:
     description: "Allows you to select an arena in roboGames"
     default: op
   robogames.arena.create:

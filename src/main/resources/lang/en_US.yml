@@ -43,6 +43,7 @@ join:
   already-joined: "&cYou have already joined the game!"
   auto-join: "&bYou have been automatically joined to the game!"
   not-enough-spawns: "&cNot enough spawnpoints to join!"
+  arena-doesnt-exist: "&cArena doesn't exist!"
   game-started: "&cGame has already started!"
   success: "&cYou joined the game!"
 

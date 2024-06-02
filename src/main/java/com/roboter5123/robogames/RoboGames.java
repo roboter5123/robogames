@@ -4,9 +4,14 @@ import com.roboter5123.robogames.handler.ArenaCommandHandler;
 import com.roboter5123.robogames.handler.RoboGamesCommandHandler;
 import com.roboter5123.robogames.listener.*;
 import com.roboter5123.robogames.service.*;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public final class RoboGames extends JavaPlugin {
 
@@ -22,14 +27,14 @@ public final class RoboGames extends JavaPlugin {
 
     public RoboGames() {
         super();
-        this.lobbyService = new LobbyServiceImpl(this);
-        this.arenaService = new ArenaServiceImpl(this);
         this.configService = new ConfigServiceImpl(this);
+        this.lobbyService = new LobbyServiceImpl(this, this.configService);
+        this.arenaService = new ArenaServiceImpl(this, this.configService);
+        this.spawnService = new SpawnServiceImpl(this, this.configService);
         this.gameService = new GameServiceImpl();
         this.languageService = new LanguageServiceImpl(this);
         this.playerService = new PlayerServiceImpl(this);
         this.schedulerService = new SchedulerServiceImpl(this);
-        this.spawnService = new SpawnServiceImpl(this);
         this.metadataService = new MetadataServiceImpl(this);
     }
 
@@ -46,8 +51,8 @@ public final class RoboGames extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Objects.requireNonNull(getCommand("robogames")).setExecutor(new RoboGamesCommandHandler(this.languageService,this.arenaService, this.spawnService, this.gameService, this.playerService,this.schedulerService, this.lobbyService));
-        Objects.requireNonNull(getCommand("arena")).setExecutor(new ArenaCommandHandler(this.languageService,this.arenaService, this.spawnService, this.gameService));
+        Objects.requireNonNull(getCommand("robogames")).setExecutor(new RoboGamesCommandHandler(this.languageService, this.arenaService, this.spawnService, this.gameService, this.playerService, this.schedulerService, this.lobbyService));
+        Objects.requireNonNull(getCommand("arena")).setExecutor(new ArenaCommandHandler(this.languageService, this.arenaService, this.spawnService, this.gameService));
         getServer().getPluginManager().registerEvents(new SelectPosListener(this.languageService, this.metadataService), this);
         getServer().getPluginManager().registerEvents(new SetSpawnListener(this.languageService, this.spawnService, this.configService, this.gameService, this.arenaService), this);
         getServer().getPluginManager().registerEvents(new MoveDisableListener(this.playerService, this.gameService, this.arenaService), this);
@@ -57,6 +62,23 @@ public final class RoboGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        Set<String> arenaNames = this.arenaService.getArenaNames();
+        for (String arenaName : arenaNames) {
+            List<Player> inGamePlayers = this.playerService.getInGamePlayers(arenaName);
+            teleportAllPlayersToLobby(arenaName, inGamePlayers);
+        }
+    }
+
+    private void teleportAllPlayersToLobby(String arenaName, List<Player> inGamePlayers) {
+        for (Player inGamePlayer : inGamePlayers) {
+            if (this.arenaService.getArena(arenaName).getLobbyName() != null) {
+                Location lobby = this.lobbyService.getLobby(arenaName);
+                inGamePlayer.teleport(lobby);
+                continue;
+            }
+            World world = inGamePlayer.getWorld();
+            Location worldSpawn = world.getSpawnLocation();
+            inGamePlayer.teleport(worldSpawn);
+        }
     }
 }

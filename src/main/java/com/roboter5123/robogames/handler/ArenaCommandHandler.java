@@ -1,7 +1,7 @@
 package com.roboter5123.robogames.handler;
 
 import com.roboter5123.robogames.command.CreateArenaCommand;
-import com.roboter5123.robogames.command.SelectArenaCommand;
+import com.roboter5123.robogames.command.GiveWandCommand;
 import com.roboter5123.robogames.command.SetSpawnCommand;
 import com.roboter5123.robogames.service.ArenaService;
 import com.roboter5123.robogames.service.GameService;
@@ -45,7 +45,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
 
         this.languageService.loadLanguageConfig(player);
         return switch (args[0].toLowerCase()) {
-            case "select" -> selectArena(player);
+            case "wand" -> giveWand(player);
             case "create" -> createArena(player, args[1]);
             case "setspawn" -> setSpawn(player, args[1]);
             default -> {
@@ -55,17 +55,17 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
         };
     }
 
-    private boolean selectArena(Player player) {
-        if (!player.hasPermission("robogames.select")) {
+    private boolean giveWand(Player player) {
+        if (!player.hasPermission("robogames.arena.wand")) {
             player.sendMessage(this.languageService.getMessage(""));
             return true;
         }
-        new SelectArenaCommand(player, this.languageService).run();
+        new GiveWandCommand(player, this.languageService).run();
         return true;
     }
 
     private boolean createArena(Player player, String arenaName) {
-        if (!player.hasPermission("robogames.create")) {
+        if (!player.hasPermission("robogames.arena.create")) {
             player.sendMessage(this.languageService.getMessage("no-permission"));
             return true;
         }
@@ -83,7 +83,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private boolean setSpawn(Player player, String arenaName) {
-        if (!player.hasPermission("robogames.setspawn")) {
+        if (!player.hasPermission("robogames.arena.setspawn")) {
             player.sendMessage(this.languageService.getMessage("no-permission"));
             return true;
         }
@@ -98,7 +98,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
         }
 
         List<String> completions = new ArrayList<>();
-        String[] commands = {"create", "select", "setspawn"};
+        String[] commands = {"create", "wand", "setspawn"};
         for (String cmd : commands) {
             if (!commandSender.hasPermission("robogames.arena." + cmd)) {
                 continue;
