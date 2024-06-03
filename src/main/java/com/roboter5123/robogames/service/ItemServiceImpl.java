@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
 
 	private LootTableEntry convertToLootTableEntry(Map<?, ?> map) {
 		LootTableEntry lootTableEntry = new LootTableEntry();
-		lootTableEntry.setType(Material.valueOf(map.get("type")));
+		lootTableEntry.setType(Material.valueOf((String) map.get("type")));
 		lootTableEntry.setAmount((Integer) map.get("amount"));
 		lootTableEntry.setWeight((Integer) map.get("weight"));
 		return lootTableEntry;

@@ -100,7 +100,7 @@ public class StartGameCommand extends BukkitRunnable {
             int itemCount = random.nextInt(1, 10);
             inventory.clear();
             for (int i = 0; i < itemCount; i++) {
-                ItemStack randomChestItem = this.itemService.getRandomChestItem(lootTable);
+                ItemStack randomChestItem = this.itemService.getRandomChestItem(this.arenaName, lootTable);
                 inventory.setItem(i, randomChestItem);
             }
         }
