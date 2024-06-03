@@ -98,9 +98,9 @@ public class StartGameCommand extends BukkitRunnable {
             } else continue;
             // TODO: Change max items and min items based on config
             int itemCount = random.nextInt(1, 10);
+            inventory.clear();
             for (int i = 0; i < itemCount; i++) {
                 ItemStack randomChestItem = this.itemService.getRandomChestItem(lootTable);
-                inventory.clear();
                 inventory.setItem(i, randomChestItem);
             }
         }
