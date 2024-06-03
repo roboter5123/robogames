@@ -10,6 +10,8 @@ public interface ConfigService {
 
     FileConfiguration getConfig();
 
+    int getMinPlayers();
+
     int getMaxPlayers();
 
     File loadConfigFile(String fileName);

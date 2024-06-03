@@ -2,6 +2,7 @@ package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
 
@@ -74,15 +75,15 @@ public class PlayerServiceImpl implements PlayerService {
         // @formatter:on
     }
 
+    public void setMetaDataOnPlayer(Player player, String key, Object value) {
+        player.setMetadata(key, new FixedMetadataValue(roboGames, value));
+    }
+
     private void ingamePlayersGuard(String arenaName) {
-        if (!this.inGamePlayers.containsKey(arenaName)) {
-            this.inGamePlayers.put(arenaName, new ArrayList<>());
-        }
+        this.inGamePlayers.computeIfAbsent(arenaName, k -> new ArrayList<>());
     }
 
     private void alivePlayersGuard(String arenaName) {
-        if (!this.alivePlayers.containsKey(arenaName)) {
-            this.alivePlayers.put(arenaName, new ArrayList<>());
-        }
+        this.alivePlayers.computeIfAbsent(arenaName, k -> new ArrayList<>());
     }
 }

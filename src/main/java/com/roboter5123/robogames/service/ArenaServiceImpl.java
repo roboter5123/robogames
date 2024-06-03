@@ -6,11 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class ArenaServiceImpl implements ArenaService{
@@ -30,7 +32,7 @@ public class ArenaServiceImpl implements ArenaService{
         this.arenas.clear();
         File arenaFile = this.configService.loadConfigFile(ARENAS_FILE_NAME);
         YamlConfiguration arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
-        Set<String> arenaNames = arenaConfig.getConfigurationSection("").getKeys(false);
+        Set<String> arenaNames = Objects.requireNonNull(arenaConfig.getConfigurationSection("")).getKeys(false);
         for (String arenaName : arenaNames) {
             ConfigurationSection arenaObject = arenaConfig.getConfigurationSection(arenaName);
             if (arenaObject == null) {
@@ -71,6 +73,11 @@ public class ArenaServiceImpl implements ArenaService{
         return isInXArenaBounds && isInYArenaBounds && isInZArenaBounds;
     }
 
+    @Override
+    public World getWorld(String worldName) {
+        return roboGames.getServer().getWorld(worldName);
+    }
+
     private ConfigurationSection convertToConfigurationSection(Arena arena) {
         ConfigurationSection configurationSection = new YamlConfiguration();
         configurationSection.set("world", arena.getWorldName());
@@ -86,7 +93,7 @@ public class ArenaServiceImpl implements ArenaService{
         return configurationSection;
     }
 
-    private Arena convertToArena(String arenaName, ConfigurationSection arenaConfig) {
+    private Arena convertToArena(@NotNull String arenaName, ConfigurationSection arenaConfig) {
 
         Arena convertedArena = new Arena();
         convertedArena.setName(arenaName);
@@ -98,7 +105,7 @@ public class ArenaServiceImpl implements ArenaService{
         double pos1X = arenaConfig.getDouble("pos1.x");
         double pos1Y = arenaConfig.getDouble("pos1.y");
         double pos1Z = arenaConfig.getDouble("pos1.z");
-        World arenaWorld = this.roboGames.getServer().getWorld(arenaWorldName);
+        World arenaWorld = this.roboGames.getServer().getWorld(Objects.requireNonNull(arenaWorldName));
         Location pos1 = new Location(arenaWorld, pos1X, pos1Y, pos1Z);
         convertedArena.setPos1(pos1);
 

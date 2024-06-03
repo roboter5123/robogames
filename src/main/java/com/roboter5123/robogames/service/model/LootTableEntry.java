@@ -29,4 +29,13 @@ public class LootTableEntry {
 	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
+
+	@Override
+	public String toString() {
+		return "LootTableEntry{" +
+				"type=" + type +
+				", weight=" + weight +
+				", amount=" + amount +
+				'}';
+	}
 }

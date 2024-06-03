@@ -4,7 +4,6 @@ import com.roboter5123.robogames.service.model.Arena;
 import com.roboter5123.robogames.service.ArenaService;
 import com.roboter5123.robogames.service.ChestService;
 import com.roboter5123.robogames.service.LanguageService;
-import com.roboter5123.robogames.service.WorldService;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -14,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ScanArenaCommand extends BukkitRunnable {
 
@@ -21,15 +21,13 @@ public class ScanArenaCommand extends BukkitRunnable {
     private final LanguageService languageService;
     private final ArenaService arenaService;
     private final ChestService chestService;
-    private final WorldService worldService;
     private final String arenaName;
 
-    public ScanArenaCommand(Player player, LanguageService languageService, ArenaService arenaService, ChestService chestService, WorldService worldService, String arenaName) {
+    public ScanArenaCommand(Player player, LanguageService languageService, ArenaService arenaService, ChestService chestService,  String arenaName) {
         this.player = player;
         this.languageService = languageService;
         this.arenaService = arenaService;
         this.chestService = chestService;
-        this.worldService = worldService;
         this.arenaName = arenaName;
     }
 
@@ -42,10 +40,11 @@ public class ScanArenaCommand extends BukkitRunnable {
         }
 
         LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
-        World world = this.worldService.getWorld(arena.getWorldName());
+        World world = this.arenaService.getWorld(arena.getWorldName());
         try {
             this.chestService.removeAllChests(this.arenaName);
         } catch (Exception e) {
+            this.player.sendMessage(Arrays.toString(e.getStackTrace()));
             this.player.sendMessage(this.languageService.getMessage("scanarena.failed-locations"));
             return;
         }

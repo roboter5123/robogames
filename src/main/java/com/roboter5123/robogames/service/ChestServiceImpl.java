@@ -27,22 +27,20 @@ public class ChestServiceImpl implements ChestService {
         this.chests.clear();
         File chestsFile = this.configService.loadConfigFile(CHESTS_FILE_NAME);
         YamlConfiguration chestsConfig = YamlConfiguration.loadConfiguration(chestsFile);
-        Set<String> arenaNames = chestsConfig.getConfigurationSection("").getKeys(false);
+        Set<String> arenaNames = Objects.requireNonNull(chestsConfig.getConfigurationSection("")).getKeys(false);
         for (String arenaName : arenaNames) {
             List<Map<?, ?>> chestMaps = chestsConfig.getMapList(arenaName);
             if (chestMaps.isEmpty()){
                 continue;
             }
             List<Location> chestLocations = chestMaps.stream().map(this::convertToLocation).toList();
-            this.chests.put(arenaName, chestLocations);
+            this.chests.put(arenaName, new ArrayList<>(chestLocations));
         }
     }
 
     @Override
     public List<Location> getChestLocations(String arenaName) {
-        if (!this.chests.containsKey(arenaName)){
-            this.chests.put(arenaName, new ArrayList<>());
-        }
+        this.chests.computeIfAbsent(arenaName, k -> new ArrayList<>());
         return this.chests.get(arenaName);
     }
 
