@@ -7,6 +7,7 @@ import com.roboter5123.robogames.service.model.LootTableEntry;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
 			ChestLootTable lootTableLabel = ChestLootTable.valueOf(lootTableName);
 			this.lootTables.get(arenaName).put(lootTableLabel, new ArrayList<>());
 			this.weightedItemsList.get(arenaName).put(lootTableLabel, new ArrayList<>());
-			YamlConfiguration arenaItemsConfig = itemsConfig.getConfigurationSection(arenaName);
+			ConfigurationSection arenaItemsConfig = itemsConfig.getConfigurationSection(arenaName);
 			List<Map<?, ?>> itemMaps = arenaItemsConfig.getMapList(lootTableName);
 			List<LootTableEntry> lootTable = itemMaps.stream().map(this::convertToLootTableEntry).collect(Collectors.toList());
 			this.lootTables.get(arenaName).put(lootTableLabel, lootTable);
