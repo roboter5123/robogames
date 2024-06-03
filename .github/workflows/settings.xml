@@ -17,7 +17,7 @@
                 </repository>
                 <repository>
                     <id>github_${OWNER}</id>
-                    <url>https://maven.pkg.github.com/${OWNER}/*</url>
+                    <url>https://maven.pkg.github.com/roboter5123/robogames</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
