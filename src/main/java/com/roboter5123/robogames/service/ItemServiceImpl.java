@@ -39,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
 	public void loadItemsConfig() {
 		// TODO: Check for bugs
 		this.lootTables.clear();
+		this.weightedItemsList.clear();
 		File itemsFile = this.configService.loadConfigFile(ITEMS_FILE_NAME);
 		YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
 		Set<String> arenaNames = itemsConfig.getConfigurationSection("").getKeys(false);
