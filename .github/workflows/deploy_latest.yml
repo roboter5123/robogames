@@ -21,7 +21,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/settings.xml package --file pom.xml
+        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/settings.xml package deploy --file pom.xml
         env:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
