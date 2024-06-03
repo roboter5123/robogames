@@ -30,7 +30,7 @@
         <server>
             <id>github_roboter5123</id>
             <username>roboter5123</username>
-            <password>${env.ACCESS_TOKEN}</password>
+            <password>${ACCESS_TOKEN}</password>
         </server>
     </servers>
 </settings>
