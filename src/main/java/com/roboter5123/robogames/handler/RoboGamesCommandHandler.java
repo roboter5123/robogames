@@ -1,9 +1,9 @@
 package com.roboter5123.robogames.handler;
 
-import com.roboter5123.robogames.command.EndGameCommand;
-import com.roboter5123.robogames.command.JoinGameCommand;
-import com.roboter5123.robogames.command.LeaveGameCommand;
-import com.roboter5123.robogames.command.StartGameCommand;
+import com.roboter5123.robogames.tasks.command.EndGameCommand;
+import com.roboter5123.robogames.tasks.command.JoinGameCommand;
+import com.roboter5123.robogames.tasks.command.LeaveGameCommand;
+import com.roboter5123.robogames.tasks.command.StartGameCommand;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,7 +1,7 @@
 package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
-import com.roboter5123.robogames.model.Arena;
+import com.roboter5123.robogames.service.model.Arena;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;

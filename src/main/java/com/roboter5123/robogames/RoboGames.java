@@ -41,7 +41,7 @@ public final class RoboGames extends JavaPlugin {
         this.playerService = new PlayerServiceImpl(this);
         this.schedulerService = new SchedulerServiceImpl(this);
         this.metadataService = new MetadataServiceImpl(this);
-        this.itemService = new ItemServiceImpl(this);
+        this.itemService = new ItemServiceImpl(this, configService);
     }
 
     @Override

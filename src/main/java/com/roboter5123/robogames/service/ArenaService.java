@@ -1,6 +1,6 @@
 package com.roboter5123.robogames.service;
 
-import com.roboter5123.robogames.model.Arena;
+import com.roboter5123.robogames.service.model.Arena;
 import org.bukkit.Location;
 
 import java.io.IOException;

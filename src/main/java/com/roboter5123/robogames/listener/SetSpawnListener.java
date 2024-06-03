@@ -1,6 +1,6 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.command.AddSpawnCommand;
+import com.roboter5123.robogames.tasks.command.AddSpawnCommand;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.Location;
 import org.bukkit.Material;

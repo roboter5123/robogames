@@ -1,8 +1,8 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.command.LeaveGameCommand;
+import com.roboter5123.robogames.tasks.command.LeaveGameCommand;
 import com.roboter5123.robogames.service.*;
-import com.roboter5123.robogames.tasks.BroadCastIngameTask;
+
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
