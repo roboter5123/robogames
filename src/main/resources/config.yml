@@ -1,4 +1,0 @@
-# Minimum number of players in a game, default is 2
-min-players: 2
-# Maximum number of players in a game, default is 24
-max-players: 24
