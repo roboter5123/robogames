@@ -5,5 +5,5 @@ import org.bukkit.inventory.ItemStack;
 
 public interface ItemService {
     void loadItemsConfig();
-    ItemStack getRandomChestItem(ChestLootTable lootTable);
+    ItemStack getRandomChestItem(String arenaName, ChestLootTable lootTable);
 }

@@ -6,6 +6,7 @@ import com.roboter5123.robogames.service.model.LootTableEntry;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,23 +42,27 @@ public class ItemServiceImpl implements ItemService {
 		YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
 		Set<String> arenaNames = itemsConfig.getConfigurationSection("").getKeys(false);
 		for (String arenaName : arenaNames) {
-			this.lootTables.put(arenaName, new HashMap<>());
-			this.weightedItemsList.put(arenaName, new ArrayList<>());
-			Set<String> lootTableNames = itemsConfig.getConfigurationSection(arenaName).getKeys(false);
-			// Parse and add items to lootTable and weighted items list
-			for (String lootTableName : lootTableNames) {
-				ChestLootTable lootTableLabel = ChestLootTable.valueOf(lootTableName);
-				this.lootTables.get(arenaName).put(lootTableLabel, new ArrayList<>());
-				this.weightedItemsList.get(arenaName).put(lootTableLabel, new ArrayList<>());
-				YamlConfiguration arenaItemsConfig = itemsConfig.getConfigurationSection(arenaName);
-				List<Map<?, ?>> itemMaps = arenaItemsConfig.getMapList(lootTableName);
-				List<LootTableEntry> lootTable = itemMaps.stream().map(this::convertToLootTableEntry).collect(Collectors.toList());
-				this.lootTables.get(arenaName).put(lootTableLabel, lootTable);
-				// Add item to weighted list the amount of weight it has
-				for (LootTableEntry lootTableEntry : lootTable) {
-					for (int j = 0; j < lootTableEntry.getWeight(); j++) {
-						this.weightedItemsList.get(arenaName).get(lootTableLabel).add(lootTableEntry);
-					}
+			parseItemConfigForArena(arenaName, itemsConfig);
+		}
+	}
+
+	private void parseItemConfigForArena(String arenaName, YamlConfiguration itemsConfig) {
+		this.lootTables.put(arenaName, new HashMap<>());
+		this.weightedItemsList.put(arenaName, new HashMap<>());
+		Set<String> lootTableNames = itemsConfig.getConfigurationSection(arenaName).getKeys(false);
+		// Parse and add items to lootTable and weighted items list
+		for (String lootTableName : lootTableNames) {
+			ChestLootTable lootTableLabel = ChestLootTable.valueOf(lootTableName);
+			this.lootTables.get(arenaName).put(lootTableLabel, new ArrayList<>());
+			this.weightedItemsList.get(arenaName).put(lootTableLabel, new ArrayList<>());
+			YamlConfiguration arenaItemsConfig = itemsConfig.getConfigurationSection(arenaName);
+			List<Map<?, ?>> itemMaps = arenaItemsConfig.getMapList(lootTableName);
+			List<LootTableEntry> lootTable = itemMaps.stream().map(this::convertToLootTableEntry).collect(Collectors.toList());
+			this.lootTables.get(arenaName).put(lootTableLabel, lootTable);
+			// Add item to weighted list the amount of weight it has
+			for (LootTableEntry lootTableEntry : lootTable) {
+				for (int j = 0; j < lootTableEntry.getWeight(); j++) {
+					this.weightedItemsList.get(arenaName).get(lootTableLabel).add(lootTableEntry);
 				}
 			}
 		}
@@ -68,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
 		// TODO: Check for bugs
 		List<LootTableEntry> lootTableEntries = this.weightedItemsList.get(arenaName).get(lootTable);
 		LootTableEntry lootTableEntry = lootTableEntries.get(random.nextInt(lootTableEntries.size()));
-		return new ItemStack(Material.valueOf(lootTableEntry.getType()), lootTableEntry.getAmount());
+		return new ItemStack(lootTableEntry.getType(), lootTableEntry.getAmount());
 	}
 
 	private LootTableEntry convertToLootTableEntry(Map<?, ?> map) {

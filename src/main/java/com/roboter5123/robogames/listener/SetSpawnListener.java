@@ -35,7 +35,7 @@ public class SetSpawnListener implements Listener {
         if (item == null || item.getType() != Material.STICK || !item.hasItemMeta() || !item.getItemMeta().getDisplayName().equals(this.languageService.getMessage("setspawn.stick-name"))) {
             return;
         }
-        String arenaName = item.getItemMeta().getLore().getFirst();
+        String arenaName = item.getItemMeta().getLore().get(0);
 
         if (!this.spawnService.getPlayerSpawns(arenaName).isEmpty()) {
             player.sendMessage(this.languageService.getMessage("setspawn.game-not-empty"));
