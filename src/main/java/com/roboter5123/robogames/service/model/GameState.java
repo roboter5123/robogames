@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.model;
+package com.roboter5123.robogames.service.model;
 
 public class GameState {
 

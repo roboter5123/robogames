@@ -1,9 +1,9 @@
 package com.roboter5123.robogames.handler;
 
-import com.roboter5123.robogames.command.EndGameCommand;
-import com.roboter5123.robogames.command.JoinGameCommand;
-import com.roboter5123.robogames.command.LeaveGameCommand;
-import com.roboter5123.robogames.command.StartGameCommand;
+import com.roboter5123.robogames.tasks.command.EndGameCommand;
+import com.roboter5123.robogames.tasks.command.JoinGameCommand;
+import com.roboter5123.robogames.tasks.command.LeaveGameCommand;
+import com.roboter5123.robogames.tasks.command.StartGameCommand;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,11 +26,12 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
     private final ArenaService arenaService;
     private final LobbyService lobbyService;
     private final ChestService chestService;
-    private final WorldService worldService;
     private final ItemService itemService;
+    private final ConfigService configService;
+    private static final String NO_PERMISSION_MESSAGE_KEY = "no-permission";
 
 
-    public RoboGamesCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, PlayerService playerService, SchedulerService schedulerService, LobbyService lobbyService, ChestService chestService, WorldService worldService, ItemService itemService) {
+    public RoboGamesCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, PlayerService playerService, SchedulerService schedulerService, LobbyService lobbyService, ChestService chestService, ItemService itemService, ConfigService configService) {
         this.languageService = languageService;
         this.gameService = gameService;
         this.spawnService = spawnService;
@@ -39,8 +40,8 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
         this.arenaService = arenaService;
         this.lobbyService = lobbyService;
         this.chestService = chestService;
-        this.worldService = worldService;
         this.itemService = itemService;
+        this.configService = configService;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
     private boolean endGame(Player player, String arenaName) {
         if (!player.hasPermission("hungergames.game.end")) {
-            player.sendMessage(this.languageService.getMessage("no-permission"));
+            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
         if (this.gameService.isGameStarting(arenaName) || !this.gameService.isGameStarted(arenaName)) {
@@ -101,16 +102,16 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
     private boolean startGame(Player player, String arenaName) {
         if (!player.hasPermission("hungergames.game.start")) {
-            player.sendMessage(this.languageService.getMessage("no-permission"));
+            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new StartGameCommand(this.gameService, this.schedulerService, this.languageService, this.playerService, this.spawnService, this.chestService, this.worldService, this.arenaService, this.itemService, arenaName).run();
+        new StartGameCommand(this.gameService, this.schedulerService, this.languageService, this.playerService, this.spawnService, this.chestService, this.arenaService, this.itemService, arenaName, this.configService).run();
         return true;
     }
 
     private boolean leaveGame(Player player) {
         if (!player.hasPermission("hungergames.game.leave")) {
-            player.sendMessage(this.languageService.getMessage("no-permission"));
+            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
         new LeaveGameCommand(player, this.languageService, this.gameService, this.playerService, this.spawnService, this.arenaService, this.lobbyService).run();
@@ -119,7 +120,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
     private boolean joinGame(Player player, String arenaName) {
         if (!player.hasPermission("hungergames.game.join")) {
-            player.sendMessage(this.languageService.getMessage("no-permission"));
+            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
         new JoinGameCommand(player, languageService, gameService, playerService, spawnService, arenaName).run();

@@ -1,22 +1,9 @@
-package com.roboter5123.robogames.command;
+package com.roboter5123.robogames.tasks.command;
 
-import com.roboter5123.robogames.model.Arena;
-import com.roboter5123.robogames.model.ChestLootTable;
 import com.roboter5123.robogames.service.*;
 import com.roboter5123.robogames.tasks.BroadCastIngameTask;
 import com.roboter5123.robogames.tasks.GameLoopTask;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Barrel;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.List;
-import java.util.Random;
 
 public class StartGameCommand extends BukkitRunnable {
 
@@ -27,23 +14,21 @@ public class StartGameCommand extends BukkitRunnable {
     private final SpawnService spawnService;
     private final String arenaName;
     private final ChestService chestService;
-    private final WorldService worldService;
     private final ArenaService arenaService;
-    private final Random random;
     private final ItemService itemService;
+    private final ConfigService configService;
 
-    public StartGameCommand(GameService gameService, SchedulerService schedulerService, LanguageService languageService, PlayerService playerService, SpawnService spawnService, ChestService chestService, WorldService worldService, ArenaService arenaService, ItemService itemService, String arenaName) {
+    public StartGameCommand(GameService gameService, SchedulerService schedulerService, LanguageService languageService, PlayerService playerService, SpawnService spawnService, ChestService chestService, ArenaService arenaService, ItemService itemService, String arenaName, ConfigService configService) {
         this.gameService = gameService;
         this.schedulerService = schedulerService;
         this.languageService = languageService;
         this.playerService = playerService;
         this.spawnService = spawnService;
         this.chestService = chestService;
-        this.worldService = worldService;
         this.arenaService = arenaService;
         this.arenaName = arenaName;
         this.itemService = itemService;
-        this.random = new Random();
+        this.configService = configService;
     }
 
     @Override
@@ -52,9 +37,14 @@ public class StartGameCommand extends BukkitRunnable {
         if (this.gameService.isGameStarted(arenaName) || this.gameService.isGameStarting(arenaName)){
             return;
         }
+
+        if (this.configService.getMinPlayers() > this.playerService.getAlivePlayers(this.arenaName).size()){
+            return;
+        }
+
         this.gameService.setGameStarting(this.arenaName, true);
         this.gameService.setTimerTicks(this.arenaName, 0L);
-        fillChests();
+        new RefillChestsCommand(this.chestService, this.arenaService, this.itemService, this.arenaName).run();
         broadcastCountdown("startgame.20-s", 0L);
         broadcastCountdown("startgame.15-s", 20L * 5);
         broadcastCountdown("startgame.10-s", 20L * 10);
@@ -75,35 +65,6 @@ public class StartGameCommand extends BukkitRunnable {
 
         BukkitRunnable gameCheckTask = new GameLoopTask(gameService, playerService, spawnService, languageService, 20L, arenaName);
         this.schedulerService.scheduleRepeatingTask(gameCheckTask, 20L * 20 + 2, 20L);
-    }
-
-    private void fillChests() {
-
-        List<Location> chestLocations = this.chestService.getChestLocations(this.arenaName);
-        Arena arena = this.arenaService.getArena(arenaName);
-        World world = this.worldService.getWorld(arena.getWorldName());
-        for (Location chestLocation : chestLocations) {
-            Block block = world.getBlockAt(chestLocation);
-            Inventory inventory;
-            ChestLootTable lootTable;
-            if (block.getState() instanceof Chest chest && block.getType() == Material.CHEST) {
-                inventory = chest.getBlockInventory();
-                lootTable = ChestLootTable.CHEST;
-            } else if (block.getState() instanceof Chest chest && block.getType() == Material.TRAPPED_CHEST) {
-                inventory = chest.getBlockInventory();
-                lootTable = ChestLootTable.TRAPPED_CHEST;
-            } else if (block.getState() instanceof Barrel barrel) {
-                inventory = barrel.getInventory();
-                lootTable = ChestLootTable.BARREL;
-            } else continue;
-            // TODO: Change max items and min items based on config
-            int itemCount = random.nextInt(1, 10);
-            for (int i = 0; i < itemCount; i++) {
-                ItemStack randomChestItem = this.itemService.getRandomChestItem(lootTable);
-                inventory.clear();
-                inventory.setItem(i, randomChestItem);
-            }
-        }
     }
 
     private void broadcastCountdown(String messageKey, long ticksUntil) {

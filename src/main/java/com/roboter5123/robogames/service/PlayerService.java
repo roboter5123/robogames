@@ -18,5 +18,7 @@ public interface PlayerService {
 
     void removeIngamePlayer(String arenaName, Player player);
 
+    void setMetaDataOnPlayer(Player player, String key, Object value);
+
     String getArenaNameByPlayer(Player player);
 }

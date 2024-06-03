@@ -1,6 +1,6 @@
 package com.roboter5123.robogames.tasks;
 
-import com.roboter5123.robogames.command.EndGameCommand;
+import com.roboter5123.robogames.tasks.command.EndGameCommand;
 import com.roboter5123.robogames.service.GameService;
 import com.roboter5123.robogames.service.LanguageService;
 import com.roboter5123.robogames.service.PlayerService;

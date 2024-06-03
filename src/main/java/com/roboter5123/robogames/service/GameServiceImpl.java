@@ -1,6 +1,6 @@
 package com.roboter5123.robogames.service;
 
-import com.roboter5123.robogames.model.GameState;
+import com.roboter5123.robogames.service.model.GameState;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,6 @@
-package com.roboter5123.robogames.command;
+package com.roboter5123.robogames.tasks.command;
 
-import com.roboter5123.robogames.model.Arena;
+import com.roboter5123.robogames.service.model.Arena;
 import com.roboter5123.robogames.service.ArenaService;
 import com.roboter5123.robogames.service.LanguageService;
 import org.bukkit.Location;

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -20,7 +21,7 @@ public class ConfigServiceImpl implements ConfigService{
     }
 
     public void checkConfigKeys() {
-        YamlConfiguration pluginConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(this.roboGames.getResource("config.yml")));
+        YamlConfiguration pluginConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(this.roboGames.getResource("config.yml"))));
         File serverConfigFile = new File(this.roboGames.getDataFolder(), "config.yml");
         YamlConfiguration serverConfig = YamlConfiguration.loadConfiguration(serverConfigFile);
         Set<String> keys = pluginConfig.getKeys(true);
@@ -41,6 +42,11 @@ public class ConfigServiceImpl implements ConfigService{
 
     public FileConfiguration getConfig() {
         return this.roboGames.getConfig();
+    }
+
+    @Override
+    public int getMinPlayers() {
+        return getConfig().getInt("min-players");
     }
 
 
