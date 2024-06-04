@@ -1,10 +1,6 @@
 package com.roboter5123.robogames.handler;
 
-import com.roboter5123.robogames.tasks.command.CreateArenaCommand;
-import com.roboter5123.robogames.tasks.command.GiveWandCommand;
-import com.roboter5123.robogames.tasks.command.ScanArenaCommand;
-import com.roboter5123.robogames.tasks.command.SetSpawnCommand;
-import com.roboter5123.robogames.tasks.command.RefillChestCommand;
+import com.roboter5123.robogames.tasks.command.*;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
