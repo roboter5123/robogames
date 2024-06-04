@@ -31,3 +31,6 @@ permissions:
   robogames.arena.setspawn:
     description: "Allows you to set spawnpoints for arenas in roboGames"
     default: op
+  robogames.arena.refill:
+    description: "Allows you to refill chests for arenas in roboGames"
+    default: op
