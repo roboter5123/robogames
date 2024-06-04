@@ -60,7 +60,7 @@ public final class RoboGames extends JavaPlugin {
 
     private void registerListeners() {
         Objects.requireNonNull(getCommand("robogames")).setExecutor(new RoboGamesCommandHandler(this.languageService, this.arenaService, this.spawnService, this.gameService, this.playerService, this.schedulerService, this.lobbyService, this.chestService, this.itemService, this.configService));
-        Objects.requireNonNull(getCommand("arena")).setExecutor(new ArenaCommandHandler(this.languageService, this.arenaService, this.spawnService, this.gameService, this.chestService));
+        Objects.requireNonNull(getCommand("arena")).setExecutor(new ArenaCommandHandler(this.languageService, this.arenaService, this.spawnService, this.gameService, this.chestService, this.itemService));
         getServer().getPluginManager().registerEvents(new SelectPosListener(this.languageService, this.playerService), this);
         getServer().getPluginManager().registerEvents(new SetSpawnListener(this.languageService, this.spawnService, this.configService, this.gameService, this.arenaService), this);
         getServer().getPluginManager().registerEvents(new MoveDisableListener(this.playerService, this.gameService, this.arenaService), this);
