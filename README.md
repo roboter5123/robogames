@@ -22,6 +22,9 @@ After reviewing your contribution for code style and bugs i will then merge your
 9. If you want to leave the game again use `/robogames leave`
 10. Start the game with `/robogames start <arena-name>`
 
+## Config
+In the config.yml filöe you can set configurations for the plugin like min and max player count.
+
 ## Permissions
 Each group should have all the permissions of the previous group.
 ### Player Permissions:
