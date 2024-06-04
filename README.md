@@ -19,3 +19,19 @@ After reviewing your contribution for code style and bugs i will then merge your
 6. Choose up to 24 spawns by left clicking on a block with the spawn wand
 7. Run `/arena scan <arena-name>` to scan the arena for chests. This will need to be done anytime you add or remove chests from your arena
 8. Now you can join your game with `/robogames join <arena-name>` and start it with `/robogames start <arena-name>`
+
+## Permissions
+Each group should have all the permissions of the previous group.
+### Player Permissions:
+- robogames.game.join
+- robogames.game.leave
+
+### Moderator Permissions:
+- robogames.game.start
+- robogames.game.end
+- robogames.arena.refill
+### Admin Permissions:
+- robogames.arena.scan
+- robogames.arena.wand
+- robogames.arena.create
+- robogames.arena.setspawn
