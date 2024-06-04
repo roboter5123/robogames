@@ -1,9 +1,6 @@
 package com.roboter5123.robogames.handler;
 
-import com.roboter5123.robogames.tasks.command.CreateArenaCommand;
-import com.roboter5123.robogames.tasks.command.GiveWandCommand;
-import com.roboter5123.robogames.tasks.command.ScanArenaCommand;
-import com.roboter5123.robogames.tasks.command.SetSpawnCommand;
+import com.roboter5123.robogames.tasks.command.*;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,13 +20,15 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
     private final SpawnService spawnService;
     private final GameService gameService;
     private final ChestService chestService;
+    private final ItemService itemService;
 
-    public ArenaCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, ChestService chestService) {
+    public ArenaCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, ChestService chestService, ItemService itemService) {
         this.languageService = languageService;
         this.arenaService = arenaService;
         this.spawnService = spawnService;
         this.gameService = gameService;
         this.chestService = chestService;
+        this.itemService = itemService;
     }
 
     @Override
@@ -49,6 +48,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
             case "create" -> createArena(player, args[1]);
             case "setspawn" -> setSpawn(player, args[1]);
             case "scan" -> scanArena(player, args[1]);
+            case "refill" -> refillArena(player, args[1]);
             default -> {
                 commandSender.sendMessage(this.languageService.getMessage("unknown-subcommand") + args[0]);
                 yield false;
@@ -56,9 +56,18 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
         };
     }
 
+    private boolean refillArena(Player player, String arenaName) {
+        if (!player.hasPermission("robogames.arena.refill")) {
+            player.sendMessage(this.languageService.getMessage("no-permission"));
+            return true;
+        }
+        new RefillChestsCommand(this.chestService, this.arenaService, this.itemService, arenaName).run();
+        return true;
+    }
+
     private boolean scanArena(Player player, String arenaName) {
         if (!player.hasPermission("robogames.arena.scan")) {
-            player.sendMessage(this.languageService.getMessage(""));
+            player.sendMessage(this.languageService.getMessage("no-permission"));
             return true;
         }
         new ScanArenaCommand(player, this.languageService, this.arenaService, this.chestService, arenaName).run();
@@ -67,7 +76,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
 
     private boolean giveWand(Player player) {
         if (!player.hasPermission("robogames.arena.wand")) {
-            player.sendMessage(this.languageService.getMessage(""));
+            player.sendMessage(this.languageService.getMessage("no-permission"));
             return true;
         }
         new GiveWandCommand(player, this.languageService).run();
