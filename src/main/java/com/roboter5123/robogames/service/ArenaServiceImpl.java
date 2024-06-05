@@ -129,14 +129,14 @@ public class ArenaServiceImpl implements ArenaService {
 		for (int x = lowHighCoordinates.lowX(); x < lowHighCoordinates.highX(); x++) {
 			for (int y = lowHighCoordinates.lowY(); y < lowHighCoordinates.highY(); y++) {
 				for (int z = lowHighCoordinates.lowZ(); z < lowHighCoordinates.highZ(); z++) {
-					checkBlock(player, world, x, y, z);
+					checkBlock(player, arenaName, world, x, y, z);
 				}
 			}
 		}
 		player.sendMessage(languageRepository.getMessage("scanarena.saved-locations"));
 	}
 
-	private void checkBlock(Player player, World world, int x, int y, int z) {
+	private void checkBlock(Player player, String arenaName, World world, int x, int y, int z) {
 		Block block = world.getBlockAt(x, y, z);
 		if (!(block.getState() instanceof Chest chest)) {
 			return;
