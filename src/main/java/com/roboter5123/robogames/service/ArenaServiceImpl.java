@@ -9,10 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.ChestRepository;
 import com.roboter5123.robogames.repository.ConfigRepository;
 import com.roboter5123.robogames.repository.LanguageRepository;
 import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.service.model.Arena;
+import org.bukkit.ChatColor;
 
 public class ArenaServiceImpl implements ArenaService {
 
@@ -20,12 +22,15 @@ public class ArenaServiceImpl implements ArenaService {
 	private final ArenaRepository arenaRepository;
 	private final ConfigRepository configRepository;
 	private final SpawnRepository spawnRepository;
+	private final ChestRepository chestRepository;
 
-	public ArenaServiceImpl(LanguageRepository languageRepository, ArenaRepository arenaRepository, ConfigRepository configRepository, SpawnRepository spawnRepository) {
+	public ArenaServiceImpl(LanguageRepository languageRepository, ArenaRepository arenaRepository, ConfigRepository configRepository, SpawnRepository spawnRepository,
+		ChestRepository chestRepository) {
 		this.languageRepository = languageRepository;
 		this.arenaRepository = arenaRepository;
 		this.configRepository = configRepository;
 		this.spawnRepository = spawnRepository;
+		this.chestRepository = chestRepository;
 	}
 
 	@Override
@@ -81,14 +86,14 @@ public class ArenaServiceImpl implements ArenaService {
 			return;
 		}
 
-		if (this.arenaRepository.getArenaNames().contains(this.arenaName)){
+		if (this.arenaRepository.getArenaNames().contains(arenaName)){
 			player.sendMessage(this.languageRepository.getMessage("arena.arena-exists"));
 			return;
 		}
 
 
 		Arena arena = new Arena();
-		arena.setName(this.arenaName);
+		arena.setName(arenaName);
 		arena.setWorldName(player.getWorld().getName());
 		arena.setPos1(pos1);
 		arena.setPos2(pos2);
@@ -112,10 +117,10 @@ public class ArenaServiceImpl implements ArenaService {
 		ScanArenaCommand.LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
 		World world = this.arenaRepository.getWorld(arena.getWorldName());
 		try {
-			this.chestRepository.removeAllChests(this.arenaName);
+			this.chestRepository.removeAllChests(arenaName);
 		} catch (Exception e) {
-			this.player.sendMessage(Arrays.toString(e.getStackTrace()));
-			this.player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
+			player.sendMessage(Arrays.toString(e.getStackTrace()));
+			player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
 			return;
 		}
 
@@ -136,9 +141,9 @@ public class ArenaServiceImpl implements ArenaService {
 		}
 		chest.getBlockInventory().clear();
 		try {
-			this.chestRepository.addChest(this.arenaName, chest);
+			this.chestRepository.addChest(arenaName, chest);
 		} catch (IOException e) {
-			this.player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
+			player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
 		}
 	}
 
