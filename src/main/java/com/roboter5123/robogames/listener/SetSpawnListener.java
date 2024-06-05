@@ -3,7 +3,6 @@ package com.roboter5123.robogames.listener;
 import com.roboter5123.robogames.repository.GameRepository;
 import com.roboter5123.robogames.repository.LanguageRepository;
 import com.roboter5123.robogames.repository.SpawnRepository;
-import com.roboter5123.robogames.tasks.command.AddSpawnCommand;
 import com.roboter5123.robogames.service.*;
 
 import org.bukkit.Location;
