@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Block;
 
 import com.roboter5123.robogames.repository.ArenaRepository;
 import com.roboter5123.robogames.repository.ChestRepository;
@@ -114,7 +116,7 @@ public class ArenaServiceImpl implements ArenaService {
 			return;
 		}
 
-		ScanArenaCommand.LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
+		ArenaServiceImpl.LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
 		World world = this.arenaRepository.getWorld(arena.getWorldName());
 		try {
 			this.chestRepository.removeAllChests(arenaName);
@@ -127,14 +129,14 @@ public class ArenaServiceImpl implements ArenaService {
 		for (int x = lowHighCoordinates.lowX(); x < lowHighCoordinates.highX(); x++) {
 			for (int y = lowHighCoordinates.lowY(); y < lowHighCoordinates.highY(); y++) {
 				for (int z = lowHighCoordinates.lowZ(); z < lowHighCoordinates.highZ(); z++) {
-					checkBlock(world, x, y, z);
+					checkBlock(player, world, x, y, z);
 				}
 			}
 		}
 		player.sendMessage(languageRepository.getMessage("scanarena.saved-locations"));
 	}
 
-	private void checkBlock(World world, int x, int y, int z) {
+	private void checkBlock(Player player, World world, int x, int y, int z) {
 		Block block = world.getBlockAt(x, y, z);
 		if (!(block.getState() instanceof Chest chest)) {
 			return;
