@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.roboter5123.robogames.service.model.Arena;
-import com.roboter5123.robogames.tasks.command.ScanArenaCommand;
 
 public interface ArenaService {
 
