@@ -141,8 +141,8 @@ public class ArenaServiceImpl implements ArenaService {
 			this.player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
 		}
 	}
-	
-	private static ScanArenaCommand.LowHighCoordinates getLowHighCoordinates(Arena arena) {
+
+	private static ArenaServiceImpl.LowHighCoordinates getLowHighCoordinates(Arena arena) {
 		Location pos1 = arena.getPos1();
 		Location pos2 = arena.getPos2();
 
@@ -175,7 +175,7 @@ public class ArenaServiceImpl implements ArenaService {
 			highZ = (int) pos2.getZ();
 			lowZ = (int) pos1.getZ();
 		}
-		return new ScanArenaCommand.LowHighCoordinates(lowX, highX, lowY, highY, lowZ, highZ);
+		return new ArenaServiceImpl.LowHighCoordinates(lowX, highX, lowY, highY, lowZ, highZ);
 	}
 
 	private record LowHighCoordinates(int lowX, int highX, int lowY, int highY, int lowZ, int highZ) {
