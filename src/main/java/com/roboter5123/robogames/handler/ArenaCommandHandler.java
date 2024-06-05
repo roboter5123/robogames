@@ -1,6 +1,10 @@
 package com.roboter5123.robogames.handler;
 
-import com.roboter5123.robogames.tasks.command.CreateArenaCommand;
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.ChestRepository;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.LanguageRepository;
+import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.tasks.command.GiveWandCommand;
 import com.roboter5123.robogames.tasks.command.ScanArenaCommand;
 import com.roboter5123.robogames.tasks.command.SetSpawnCommand;
@@ -18,24 +22,27 @@ import java.util.List;
 
 public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
 
-    private final LanguageService languageService;
+    private final LanguageRepository languageRepository;
+    private final ArenaRepository arenaRepository;
+    private final SpawnRepository spawnRepository;
+    private final GameRepository gameRepository;
+    private final ChestRepository chestRepository;
     private final ArenaService arenaService;
-    private final SpawnService spawnService;
-    private final GameService gameService;
-    private final ChestService chestService;
 
-    public ArenaCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, ChestService chestService) {
-        this.languageService = languageService;
+    public ArenaCommandHandler(LanguageRepository languageRepository, ArenaRepository arenaRepository, SpawnRepository spawnRepository, GameRepository gameRepository, ChestRepository chestRepository,
+        ArenaService arenaService) {
+        this.languageRepository = languageRepository;
+        this.arenaRepository = arenaRepository;
+        this.spawnRepository = spawnRepository;
+        this.gameRepository = gameRepository;
+        this.chestRepository = chestRepository;
         this.arenaService = arenaService;
-        this.spawnService = spawnService;
-        this.gameService = gameService;
-        this.chestService = chestService;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            commandSender.sendMessage(this.languageService.getMessage("usage"));
+            commandSender.sendMessage(this.languageRepository.getMessage("usage"));
             return false;
         }
 
@@ -43,14 +50,14 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        this.languageService.loadLanguageConfig(player);
+        this.languageRepository.loadLanguageConfig(player);
         return switch (args[0].toLowerCase()) {
             case "wand" -> giveWand(player);
             case "create" -> createArena(player, args[1]);
             case "setspawn" -> setSpawn(player, args[1]);
             case "scan" -> scanArena(player, args[1]);
             default -> {
-                commandSender.sendMessage(this.languageService.getMessage("unknown-subcommand") + args[0]);
+                commandSender.sendMessage(this.languageRepository.getMessage("unknown-subcommand") + args[0]);
                 yield false;
             }
         };
@@ -58,43 +65,43 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
 
     private boolean scanArena(Player player, String arenaName) {
         if (!player.hasPermission("robogames.arena.scan")) {
-            player.sendMessage(this.languageService.getMessage(""));
+            player.sendMessage(this.languageRepository.getMessage(""));
             return true;
         }
-        new ScanArenaCommand(player, this.languageService, this.arenaService, this.chestService, arenaName).run();
+        this.arenaService.scanArena(player, arenaName);
         return true;
     }
 
     private boolean giveWand(Player player) {
         if (!player.hasPermission("robogames.arena.wand")) {
-            player.sendMessage(this.languageService.getMessage(""));
+            player.sendMessage(this.languageRepository.getMessage(""));
             return true;
         }
-        new GiveWandCommand(player, this.languageService).run();
+        new GiveWandCommand(player, this.languageRepository).run();
         return true;
     }
 
     private boolean createArena(Player player, String arenaName) {
         if (!player.hasPermission("robogames.arena.create")) {
-            player.sendMessage(this.languageService.getMessage("no-permission"));
+            player.sendMessage(this.languageRepository.getMessage("no-permission"));
             return true;
         } else if (arenaName == null || arenaName.isEmpty()) {
             return false;
-        } else if (this.arenaService.getArenaNames().contains(arenaName)) {
-            player.sendMessage(arenaName + languageService.getMessage("arena.arena-exists"));
+        } else if (this.arenaRepository.getArenaNames().contains(arenaName)) {
+            player.sendMessage(arenaName + languageRepository.getMessage("arena.arena-exists"));
             return true;
         }
 
-        new CreateArenaCommand(player, this.languageService, arenaService, arenaName).run();
+        this.arenaService.createArena(player, arenaName);
         return true;
     }
 
     private boolean setSpawn(Player player, String arenaName) {
         if (!player.hasPermission("robogames.arena.setspawn")) {
-            player.sendMessage(this.languageService.getMessage("no-permission"));
+            player.sendMessage(this.languageRepository.getMessage("no-permission"));
             return true;
         }
-        new SetSpawnCommand(player, this.languageService, this.spawnService, this.gameService, arenaName).run();
+        new SetSpawnCommand(player, this.languageRepository, this.spawnRepository, this.gameRepository, arenaName).run();
         return true;
     }
 

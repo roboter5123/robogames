@@ -1,8 +1,8 @@
 package com.roboter5123.robogames.tasks.command;
 
-import com.roboter5123.robogames.service.ArenaService;
-import com.roboter5123.robogames.service.ChestService;
-import com.roboter5123.robogames.service.ItemService;
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.ChestRepository;
+import com.roboter5123.robogames.repository.ItemRepository;
 import com.roboter5123.robogames.service.model.Arena;
 import com.roboter5123.robogames.service.model.ChestLootTable;
 import org.bukkit.Location;
@@ -21,26 +21,26 @@ import java.util.Random;
 
 public class RefillChestsCommand extends BukkitRunnable {
 
-    private final ChestService chestService;
-    private final ArenaService arenaService;
-    private final ItemService itemService;
+    private final ChestRepository chestRepository;
+    private final ArenaRepository arenaRepository;
+    private final ItemRepository itemRepository;
     private final String arenaName;
     private final Random random;
 
 
-    public RefillChestsCommand(ChestService chestService, ArenaService arenaService, ItemService itemService, String arenaName) {
-        this.chestService = chestService;
-        this.arenaService = arenaService;
+    public RefillChestsCommand(ChestRepository chestRepository, ArenaRepository arenaRepository, ItemRepository itemRepository, String arenaName) {
+        this.chestRepository = chestRepository;
+        this.arenaRepository = arenaRepository;
         this.arenaName = arenaName;
         this.random = new Random();
-        this.itemService = itemService;
+        this.itemRepository = itemRepository;
     }
 
     @Override
     public void run() {
-        List<Location> chestLocations = this.chestService.getChestLocations(this.arenaName);
-        Arena arena = this.arenaService.getArena(arenaName);
-        World world = this.arenaService.getWorld(arena.getWorldName());
+        List<Location> chestLocations = this.chestRepository.getChestLocations(this.arenaName);
+        Arena arena = this.arenaRepository.getArena(arenaName);
+        World world = this.arenaRepository.getWorld(arena.getWorldName());
         for (Location chestLocation : chestLocations) {
             Block block = world.getBlockAt(chestLocation);
             Inventory inventory;
@@ -60,7 +60,7 @@ public class RefillChestsCommand extends BukkitRunnable {
             inventory.clear();
             List<Integer> usedSlots = new ArrayList<>();
             for (int i = 0; i < itemCount; i++) {
-                ItemStack randomChestItem = this.itemService.getRandomChestItem(this.arenaName, lootTable);
+                ItemStack randomChestItem = this.itemRepository.getRandomChestItem(this.arenaName, lootTable);
                 int slot;
                 do {
                     slot = random.nextInt(inventory.getSize());

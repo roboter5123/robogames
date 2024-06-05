@@ -1,6 +1,6 @@
 package com.roboter5123.robogames.tasks.command;
 
-import com.roboter5123.robogames.service.LanguageService;
+import com.roboter5123.robogames.repository.LanguageRepository;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,11 +13,11 @@ import java.util.List;
 public class GiveWandCommand extends BukkitRunnable {
 
     private final Player player;
-    private final LanguageService languageService;
+    private final LanguageRepository languageRepository;
 
-    public GiveWandCommand(Player player, LanguageService languageService) {
+    public GiveWandCommand(Player player, LanguageRepository languageRepository) {
         this.player = player;
-        this.languageService = languageService;
+        this.languageRepository = languageRepository;
     }
 
     @Override
@@ -25,13 +25,13 @@ public class GiveWandCommand extends BukkitRunnable {
         ItemStack blazeRod = new ItemStack(Material.BLAZE_ROD);
         ItemMeta meta = blazeRod.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(this.languageService.getMessage("arena.stick-name"));
+        meta.setDisplayName(this.languageRepository.getMessage("arena.stick-name"));
         List<String> lore = new ArrayList<>();
-        lore.add(this.languageService.getMessage("arena.stick-left"));
-        lore.add(this.languageService.getMessage("arena.stick-right"));
+        lore.add(this.languageRepository.getMessage("arena.stick-left"));
+        lore.add(this.languageRepository.getMessage("arena.stick-right"));
         meta.setLore(lore);
         blazeRod.setItemMeta(meta);
         player.getInventory().addItem(blazeRod);
-        player.sendMessage(this.languageService.getMessage("arena.given-stick"));
+        player.sendMessage(this.languageRepository.getMessage("arena.given-stick"));
     }
 }

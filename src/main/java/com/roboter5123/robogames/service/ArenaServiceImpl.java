@@ -1,120 +1,184 @@
 package com.roboter5123.robogames.service;
 
-import com.roboter5123.robogames.RoboGames;
-import com.roboter5123.robogames.service.model.Arena;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-public class ArenaServiceImpl implements ArenaService{
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.ConfigRepository;
+import com.roboter5123.robogames.repository.LanguageRepository;
+import com.roboter5123.robogames.repository.SpawnRepository;
+import com.roboter5123.robogames.service.model.Arena;
+import com.roboter5123.robogames.tasks.command.ScanArenaCommand;
 
-    private final RoboGames roboGames;
-    private final ConfigService configService;
-    private final Map<String, Arena> arenas;
-    private static final String ARENAS_FILE_NAME = "arenas.yml";
+public class ArenaServiceImpl implements ArenaService {
 
-    public ArenaServiceImpl(RoboGames roboGames, ConfigService configService) {
-        this.roboGames = roboGames;
-        this.configService = configService;
-        this.arenas = new HashMap<>();
-    }
+	private final LanguageRepository languageRepository;
+	private final ArenaRepository arenaRepository;
+	private final ConfigRepository configRepository;
+	private final SpawnRepository spawnRepository;
 
-    public void loadArenaConfig() {
-        this.arenas.clear();
-        File arenaFile = this.configService.loadConfigFile(ARENAS_FILE_NAME);
-        YamlConfiguration arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
-        Set<String> arenaNames = Objects.requireNonNull(arenaConfig.getConfigurationSection("")).getKeys(false);
-        for (String arenaName : arenaNames) {
-            ConfigurationSection arenaObject = arenaConfig.getConfigurationSection(arenaName);
-            if (arenaObject == null) {
-                continue;
-            }
-            this.arenas.put(arenaName, convertToArena(arenaName, arenaObject));
-        }
-    }
+	public ArenaServiceImpl(LanguageRepository languageRepository, ArenaRepository arenaRepository, ConfigRepository configRepository, SpawnRepository spawnRepository) {
+		this.languageRepository = languageRepository;
+		this.arenaRepository = arenaRepository;
+		this.configRepository = configRepository;
+		this.spawnRepository = spawnRepository;
+	}
 
-    public Arena getArena(String arena) {
-        return this.arenas.get(arena);
-    }
+	@Override
+	public void addSpawn(Player player, Location newSpawnPoint) {
 
-    public void createArena(Arena arena) throws IOException {
-        File arenaFile = this.configService.loadConfigFile(ARENAS_FILE_NAME);
-        YamlConfiguration arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
-        ConfigurationSection configSection = convertToConfigurationSection(arena);
-        arenaConfig.set(arena.getName(), configSection);
-        arenaConfig.save(arenaFile);
-        this.arenas.put(arena.getName(), arena);
-    }
+		Optional<Arena> arenaOptional = this.arenaRepository.getArenaNames().stream().map(this.arenaRepository::getArena).filter(arena -> newSpawnPoint.getWorld()
+			.getName().equals(arena.getWorldName())).findFirst();
+		if (arenaOptional.isEmpty()) {
+			return;
+		}
+		Arena arena = arenaOptional.get();
+		List<Location> allSpawns = this.spawnRepository.getAllSpawns(arena.getName());
 
-    public Set<String> getArenaNames() {
-        return this.arenas.keySet();
-    }
+		if (allSpawns.contains(newSpawnPoint)) {
+			player.sendMessage(this.languageRepository.getMessage("setspawnhandler.duplicate"));
+			return;
+		}
 
-    @Override
-    public boolean isInArenaBounds(String arenaName, Location location) {
-        Arena arena = this.arenas.get(arenaName);
-        if (arena == null){
-            return false;
-        }
-        Location pos1 = arena.getPos1();
-        Location pos2 = arena.getPos2();
-        boolean isInXArenaBounds = location.getX() >= Math.min(pos1.getX(), pos2.getX()) && location.getX() <= Math.max(pos1.getX(), pos2.getX());
-        boolean isInYArenaBounds = location.getY() >= Math.min(pos1.getY(), pos2.getY()) && location.getY() <= Math.max(pos1.getY(), pos2.getY());
-        boolean isInZArenaBounds = location.getZ() >= Math.min(pos1.getZ(), pos2.getZ()) && location.getZ() <= Math.max(pos1.getZ(), pos2.getZ());
-        return isInXArenaBounds && isInYArenaBounds && isInZArenaBounds;
-    }
+		if (!this.arenaRepository.isInArenaBounds(arena.getName(), newSpawnPoint)) {
+			player.sendMessage(this.languageRepository.getMessage("setspawnhandler.not-in-arena"));
+			return;
+		}
 
-    @Override
-    public World getWorld(String worldName) {
-        return roboGames.getServer().getWorld(worldName);
-    }
+		if (allSpawns.size() == this.configRepository.getMaxPlayers()) {
+			player.sendMessage(ChatColor.RED + this.languageRepository.getMessage("setspawnhandler.max-spawn"));
+			return;
+		}
 
-    private ConfigurationSection convertToConfigurationSection(Arena arena) {
-        ConfigurationSection configurationSection = new YamlConfiguration();
-        configurationSection.set("world", arena.getWorldName());
-        configurationSection.set("lobby", arena.getLobbyName());
+		try {
+			this.spawnRepository.createSpawn(arena.getName(), newSpawnPoint);
+		} catch (IOException e) {
+			player.sendMessage(languageRepository.getMessage("arena.save-error"));
+		}
+		player.sendMessage(
+			this.languageRepository.getMessage("setspawnhandler.position-set") + allSpawns.size() + this.languageRepository.getMessage("setspawnhandler.set-at") +
+				newSpawnPoint.getBlockX() + this.languageRepository.getMessage("setspawnhandler.coord-y") + newSpawnPoint.getBlockY() +
+				this.languageRepository.getMessage("setspawnhandler.coord-z") + newSpawnPoint.getBlockZ());
 
-        configurationSection.set("pos1.x", arena.getPos1().getX());
-        configurationSection.set("pos1.y", arena.getPos1().getY());
-        configurationSection.set("pos1.z", arena.getPos1().getZ());
+	}
 
-        configurationSection.set("pos2.x", arena.getPos2().getX());
-        configurationSection.set("pos2.y", arena.getPos2().getY());
-        configurationSection.set("pos2.z", arena.getPos2().getZ());
-        return configurationSection;
-    }
+	@Override
+	public void createArena(Player player, String arenaName) {
 
-    private Arena convertToArena(@NotNull String arenaName, ConfigurationSection arenaConfig) {
+		if (!player.hasMetadata("arena_pos1") || !player.hasMetadata("arena_pos2")) {
+			player.sendMessage(this.languageRepository.getMessage("arena.no-values"));
+			return;
+		}
 
-        Arena convertedArena = new Arena();
-        convertedArena.setName(arenaName);
-        String arenaWorldName = arenaConfig.getString("world");
-        convertedArena.setWorldName(arenaWorldName);
+		Location pos1 = (Location) player.getMetadata("arena_pos1").get(0).value();
+		Location pos2 = (Location) player.getMetadata("arena_pos2").get(0).value();
+		if (pos1 == null || pos2 == null) {
+			player.sendMessage(this.languageRepository.getMessage("arena.invalid-values"));
+			return;
+		}
 
-        convertedArena.setLobbyName(arenaConfig.getString("lobby"));
+		if (this.arenaRepository.getArenaNames().contains(this.arenaName)){
+			player.sendMessage(this.languageRepository.getMessage("arena.arena-exists"));
+			return;
+		}
 
-        double pos1X = arenaConfig.getDouble("pos1.x");
-        double pos1Y = arenaConfig.getDouble("pos1.y");
-        double pos1Z = arenaConfig.getDouble("pos1.z");
-        World arenaWorld = this.roboGames.getServer().getWorld(Objects.requireNonNull(arenaWorldName));
-        Location pos1 = new Location(arenaWorld, pos1X, pos1Y, pos1Z);
-        convertedArena.setPos1(pos1);
 
-        double pos2X = arenaConfig.getDouble("pos2.x");
-        double pos2Y = arenaConfig.getDouble("pos2.y");
-        double pos2Z = arenaConfig.getDouble("pos2.z");
-        Location pos2 = new Location(arenaWorld, pos2X, pos2Y, pos2Z);
-        convertedArena.setPos2(pos2);
+		Arena arena = new Arena();
+		arena.setName(this.arenaName);
+		arena.setWorldName(player.getWorld().getName());
+		arena.setPos1(pos1);
+		arena.setPos2(pos2);
+		try {
+			this.arenaRepository.createArena(arena);
+		} catch (IOException e) {
+			player.sendMessage(this.languageRepository.getMessage("arena.creation-failed"));
+		}
+		player.sendMessage(this.languageRepository.getMessage("arena.region-created"));
 
-        return convertedArena;
-    }
+	}
+
+	@Override
+	public void scanArena(Player player, String arenaName) {
+		Arena arena = this.arenaRepository.getArena(arenaName);
+		if (arena == null) {
+			player.sendMessage(this.languageRepository.getMessage("arena-doesnt-exists"));
+			return;
+		}
+
+		ScanArenaCommand.LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
+		World world = this.arenaRepository.getWorld(arena.getWorldName());
+		try {
+			this.chestRepository.removeAllChests(this.arenaName);
+		} catch (Exception e) {
+			this.player.sendMessage(Arrays.toString(e.getStackTrace()));
+			this.player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
+			return;
+		}
+
+		for (int x = lowHighCoordinates.lowX(); x < lowHighCoordinates.highX(); x++) {
+			for (int y = lowHighCoordinates.lowY(); y < lowHighCoordinates.highY(); y++) {
+				for (int z = lowHighCoordinates.lowZ(); z < lowHighCoordinates.highZ(); z++) {
+					checkBlock(world, x, y, z);
+				}
+			}
+		}
+		player.sendMessage(languageRepository.getMessage("scanarena.saved-locations"));
+	}
+
+	private void checkBlock(World world, int x, int y, int z) {
+		Block block = world.getBlockAt(x, y, z);
+		if (!(block.getState() instanceof Chest chest)) {
+			return;
+		}
+		chest.getBlockInventory().clear();
+		try {
+			this.chestRepository.addChest(this.arenaName, chest);
+		} catch (IOException e) {
+			this.player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
+		}
+	}
+
+	@NotNull
+	private static ScanArenaCommand.LowHighCoordinates getLowHighCoordinates(Arena arena) {
+		Location pos1 = arena.getPos1();
+		Location pos2 = arena.getPos2();
+
+		int lowX;
+		int highX;
+		if (pos1.getX() > pos2.getX()) {
+			highX = (int) pos1.getX();
+			lowX = (int) pos2.getX();
+		} else {
+			highX = (int) pos2.getX();
+			lowX = (int) pos1.getX();
+		}
+
+		int lowY;
+		int highY;
+		if (pos1.getY() > pos2.getY()) {
+			highY = (int) pos1.getY();
+			lowY = (int) pos2.getY();
+		} else {
+			highY = (int) pos2.getY();
+			lowY = (int) pos1.getY();
+		}
+
+		int lowZ;
+		int highZ;
+		if (pos1.getZ() > pos2.getZ()) {
+			highZ = (int) pos1.getZ();
+			lowZ = (int) pos2.getZ();
+		} else {
+			highZ = (int) pos2.getZ();
+			lowZ = (int) pos1.getZ();
+		}
+		return new ScanArenaCommand.LowHighCoordinates(lowX, highX, lowY, highY, lowZ, highZ);
+	}
+
+	private record LowHighCoordinates(int lowX, int highX, int lowY, int highY, int lowZ, int highZ) {
+
+	}
+
 }

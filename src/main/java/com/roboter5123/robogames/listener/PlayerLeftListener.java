@@ -1,7 +1,12 @@
 package com.roboter5123.robogames.listener;
 
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.LanguageRepository;
+import com.roboter5123.robogames.repository.LobbyRepository;
+import com.roboter5123.robogames.repository.PlayerRepository;
+import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.tasks.command.LeaveGameCommand;
-import com.roboter5123.robogames.service.*;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -12,27 +17,27 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerLeftListener implements Listener {
 
-    private final LanguageService languageService;
+    private final LanguageRepository languageRepository;
 
-    private final PlayerService playerService;
-    private final SpawnService spawnService;
-    private final GameService gameService;
-    private final ArenaService arenaService;
-    private final LobbyService lobbyService;
+    private final PlayerRepository playerRepository;
+    private final SpawnRepository spawnRepository;
+    private final GameRepository gameRepository;
+    private final ArenaRepository arenaRepository;
+    private final LobbyRepository lobbyRepository;
 
-    public PlayerLeftListener(LanguageService languageService, PlayerService playerService, SpawnService spawnService, GameService gameService, ArenaService arenaService, LobbyService lobbyService) {
-        this.languageService = languageService;
-        this.playerService = playerService;
-        this.spawnService = spawnService;
-        this.gameService = gameService;
-        this.arenaService = arenaService;
-        this.lobbyService = lobbyService;
+    public PlayerLeftListener(LanguageRepository languageRepository, PlayerRepository playerRepository, SpawnRepository spawnRepository, GameRepository gameRepository, ArenaRepository arenaRepository, LobbyRepository lobbyRepository) {
+        this.languageRepository = languageRepository;
+        this.playerRepository = playerRepository;
+        this.spawnRepository = spawnRepository;
+        this.gameRepository = gameRepository;
+        this.arenaRepository = arenaRepository;
+        this.lobbyRepository = lobbyRepository;
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
 
         Player player = event.getPlayer();
-        new LeaveGameCommand(player, this.languageService, this.gameService, this.playerService, this.spawnService, this.arenaService, this.lobbyService).run();
+        new LeaveGameCommand(player, this.languageRepository, this.gameRepository, this.playerRepository, this.spawnRepository, this.arenaRepository, this.lobbyRepository).run();
     }
 }

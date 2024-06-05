@@ -1,8 +1,8 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.service.ArenaService;
-import com.roboter5123.robogames.service.GameService;
-import com.roboter5123.robogames.service.PlayerService;
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.PlayerRepository;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -12,26 +12,26 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class MoveDisableListener implements Listener {
 
-    private final PlayerService playerService;
-    private final GameService gameService;
-    private final ArenaService arenaService;
+    private final PlayerRepository playerRepository;
+    private final GameRepository gameRepository;
+    private final ArenaRepository arenaRepository;
 
-    public MoveDisableListener(PlayerService playerService, GameService gameService, ArenaService arenaService) {
-        this.playerService = playerService;
-        this.gameService = gameService;
-        this.arenaService = arenaService;
+    public MoveDisableListener(PlayerRepository playerRepository, GameRepository gameRepository, ArenaRepository arenaRepository) {
+        this.playerRepository = playerRepository;
+        this.gameRepository = gameRepository;
+        this.arenaRepository = arenaRepository;
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
 
         Player player = event.getPlayer();
-        String arenaName = this.playerService.getArenaNameByPlayer(player);
+        String arenaName = this.playerRepository.getArenaNameByPlayer(player);
         if (arenaName == null) {
             return;
         }
 
-        if (this.gameService.isGameStarted(arenaName)) {
+        if (this.gameRepository.isGameStarted(arenaName)) {
             return;
         }
 
@@ -41,7 +41,7 @@ public class MoveDisableListener implements Listener {
             return;
         }
 
-        if (!this.arenaService.isInArenaBounds(arenaName, to)) {
+        if (!this.arenaRepository.isInArenaBounds(arenaName, to)) {
             return;
         }
 

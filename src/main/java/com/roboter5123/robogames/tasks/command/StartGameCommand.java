@@ -1,50 +1,58 @@
 package com.roboter5123.robogames.tasks.command;
 
-import com.roboter5123.robogames.service.*;
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.ChestRepository;
+import com.roboter5123.robogames.repository.ConfigRepository;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.ItemRepository;
+import com.roboter5123.robogames.repository.LanguageRepository;
+import com.roboter5123.robogames.repository.PlayerRepository;
+import com.roboter5123.robogames.repository.SchedulerRepository;
+import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.tasks.BroadCastIngameTask;
 import com.roboter5123.robogames.tasks.GameLoopTask;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class StartGameCommand extends BukkitRunnable {
 
-    private final GameService gameService;
-    private final SchedulerService schedulerService;
-    private final LanguageService languageService;
-    private final PlayerService playerService;
-    private final SpawnService spawnService;
+    private final GameRepository gameRepository;
+    private final SchedulerRepository schedulerRepository;
+    private final LanguageRepository languageRepository;
+    private final PlayerRepository playerRepository;
+    private final SpawnRepository spawnRepository;
     private final String arenaName;
-    private final ChestService chestService;
-    private final ArenaService arenaService;
-    private final ItemService itemService;
-    private final ConfigService configService;
+    private final ChestRepository chestRepository;
+    private final ArenaRepository arenaRepository;
+    private final ItemRepository itemRepository;
+    private final ConfigRepository configRepository;
 
-    public StartGameCommand(GameService gameService, SchedulerService schedulerService, LanguageService languageService, PlayerService playerService, SpawnService spawnService, ChestService chestService, ArenaService arenaService, ItemService itemService, String arenaName, ConfigService configService) {
-        this.gameService = gameService;
-        this.schedulerService = schedulerService;
-        this.languageService = languageService;
-        this.playerService = playerService;
-        this.spawnService = spawnService;
-        this.chestService = chestService;
-        this.arenaService = arenaService;
+    public StartGameCommand(GameRepository gameRepository, SchedulerRepository schedulerRepository, LanguageRepository languageRepository, PlayerRepository playerRepository, SpawnRepository spawnRepository, ChestRepository chestRepository, ArenaRepository arenaRepository, ItemRepository itemRepository, String arenaName, ConfigRepository configRepository) {
+        this.gameRepository = gameRepository;
+        this.schedulerRepository = schedulerRepository;
+        this.languageRepository = languageRepository;
+        this.playerRepository = playerRepository;
+        this.spawnRepository = spawnRepository;
+        this.chestRepository = chestRepository;
+        this.arenaRepository = arenaRepository;
         this.arenaName = arenaName;
-        this.itemService = itemService;
-        this.configService = configService;
+        this.itemRepository = itemRepository;
+        this.configRepository = configRepository;
     }
 
     @Override
     public void run() {
 
-        if (this.gameService.isGameStarted(arenaName) || this.gameService.isGameStarting(arenaName)){
+        if (this.gameRepository.isGameStarted(arenaName) || this.gameRepository.isGameStarting(arenaName)){
             return;
         }
 
-        if (this.configService.getMinPlayers() > this.playerService.getAlivePlayers(this.arenaName).size()){
+        if (this.configRepository.getMinPlayers() > this.playerRepository.getAlivePlayers(this.arenaName).size()){
             return;
         }
 
-        this.gameService.setGameStarting(this.arenaName, true);
-        this.gameService.setTimerTicks(this.arenaName, 0L);
-        new RefillChestsCommand(this.chestService, this.arenaService, this.itemService, this.arenaName).run();
+        this.gameRepository.setGameStarting(this.arenaName, true);
+        this.gameRepository.setTimerTicks(this.arenaName, 0L);
+        new RefillChestsCommand(this.chestRepository, this.arenaRepository, this.itemRepository, this.arenaName).run();
         broadcastCountdown("startgame.20-s", 0L);
         broadcastCountdown("startgame.15-s", 20L * 5);
         broadcastCountdown("startgame.10-s", 20L * 10);
@@ -57,19 +65,19 @@ public class StartGameCommand extends BukkitRunnable {
 
         BukkitRunnable startGameTask = new BukkitRunnable() {
             public void run() {
-                gameService.setGameStarted(arenaName, true);
-                gameService.setGameStarting(arenaName, false);
+                gameRepository.setGameStarted(arenaName, true);
+                gameRepository.setGameStarting(arenaName, false);
             }
         };
-        this.schedulerService.scheduleDelayedTask(startGameTask, 20L * 20);
+        this.schedulerRepository.scheduleDelayedTask(startGameTask, 20L * 20);
 
-        BukkitRunnable gameCheckTask = new GameLoopTask(gameService, playerService, spawnService, languageService, 20L, arenaName);
-        this.schedulerService.scheduleRepeatingTask(gameCheckTask, 20L * 20 + 2, 20L);
+        BukkitRunnable gameCheckTask = new GameLoopTask(gameRepository, playerRepository, spawnRepository, languageRepository, 20L, arenaName);
+        this.schedulerRepository.scheduleRepeatingTask(gameCheckTask, 20L * 20 + 2, 20L);
     }
 
     private void broadcastCountdown(String messageKey, long ticksUntil) {
-        String message = languageService.getMessage(messageKey);
-        BukkitRunnable gameStartsInTask = new BroadCastIngameTask(this.playerService, message, this.arenaName);
-        this.schedulerService.scheduleDelayedTask(gameStartsInTask, ticksUntil);
+        String message = languageRepository.getMessage(messageKey);
+        BukkitRunnable gameStartsInTask = new BroadCastIngameTask(this.playerRepository, message, this.arenaName);
+        this.schedulerRepository.scheduleDelayedTask(gameStartsInTask, ticksUntil);
     }
 }

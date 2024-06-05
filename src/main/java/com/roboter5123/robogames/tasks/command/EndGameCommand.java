@@ -1,6 +1,9 @@
 package com.roboter5123.robogames.tasks.command;
 
-import com.roboter5123.robogames.service.*;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.PlayerRepository;
+import com.roboter5123.robogames.repository.SpawnRepository;
+
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -10,32 +13,32 @@ import java.util.List;
 
 public class EndGameCommand extends BukkitRunnable {
 
-    private final GameService gameService;
-    private final SpawnService spawnService;
-    private final PlayerService playerService;
+    private final GameRepository gameRepository;
+    private final SpawnRepository spawnRepository;
+    private final PlayerRepository playerRepository;
     private final String arenaName;
 
-    public EndGameCommand(GameService gameService, SpawnService spawnService, PlayerService playerService, String arenaName) {
-        this.gameService = gameService;
-        this.spawnService = spawnService;
-        this.playerService = playerService;
+    public EndGameCommand(GameRepository gameRepository, SpawnRepository spawnRepository, PlayerRepository playerRepository, String arenaName) {
+        this.gameRepository = gameRepository;
+        this.spawnRepository = spawnRepository;
+        this.playerRepository = playerRepository;
         this.arenaName = arenaName;
     }
 
     @Override
     public void run() {
-        this.gameService.setGameStarted(this.arenaName, false);
-        this.gameService.setGameStarting(this.arenaName,false);
-        this.spawnService.clearPlayerSpawns(this.arenaName);
+        this.gameRepository.setGameStarted(this.arenaName, false);
+        this.gameRepository.setGameStarting(this.arenaName,false);
+        this.spawnRepository.clearPlayerSpawns(this.arenaName);
 
-        List<Player> inGamePlayers = this.playerService.getInGamePlayers(this.arenaName);
+        List<Player> inGamePlayers = this.playerRepository.getInGamePlayers(this.arenaName);
         for (Player inGamePlayer : inGamePlayers) {
             inGamePlayer.setGameMode(GameMode.ADVENTURE);
             inGamePlayer.getInventory().clear();
             World world = inGamePlayer.getWorld();
             inGamePlayer.teleport(world.getSpawnLocation());
         }
-        this.playerService.clearInGamePlayers(this.arenaName);
+        this.playerRepository.clearInGamePlayers(this.arenaName);
     }
 
 }

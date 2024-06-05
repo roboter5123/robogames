@@ -1,10 +1,20 @@
 package com.roboter5123.robogames.handler;
 
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.ChestRepository;
+import com.roboter5123.robogames.repository.ConfigRepository;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.ItemRepository;
+import com.roboter5123.robogames.repository.LanguageRepository;
+import com.roboter5123.robogames.repository.LobbyRepository;
+import com.roboter5123.robogames.repository.PlayerRepository;
+import com.roboter5123.robogames.repository.SchedulerRepository;
+import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.tasks.command.EndGameCommand;
 import com.roboter5123.robogames.tasks.command.JoinGameCommand;
 import com.roboter5123.robogames.tasks.command.LeaveGameCommand;
 import com.roboter5123.robogames.tasks.command.StartGameCommand;
-import com.roboter5123.robogames.service.*;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,37 +28,37 @@ import java.util.List;
 
 public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
-    private final LanguageService languageService;
-    private final GameService gameService;
-    private final SpawnService spawnService;
-    private final PlayerService playerService;
-    private final SchedulerService schedulerService;
-    private final ArenaService arenaService;
-    private final LobbyService lobbyService;
-    private final ChestService chestService;
-    private final ItemService itemService;
-    private final ConfigService configService;
+    private final LanguageRepository languageRepository;
+    private final GameRepository gameRepository;
+    private final SpawnRepository spawnRepository;
+    private final PlayerRepository playerRepository;
+    private final SchedulerRepository schedulerRepository;
+    private final ArenaRepository arenaRepository;
+    private final LobbyRepository lobbyRepository;
+    private final ChestRepository chestRepository;
+    private final ItemRepository itemRepository;
+    private final ConfigRepository configRepository;
     private static final String NO_PERMISSION_MESSAGE_KEY = "no-permission";
 
 
-    public RoboGamesCommandHandler(LanguageService languageService, ArenaService arenaService, SpawnService spawnService, GameService gameService, PlayerService playerService, SchedulerService schedulerService, LobbyService lobbyService, ChestService chestService, ItemService itemService, ConfigService configService) {
-        this.languageService = languageService;
-        this.gameService = gameService;
-        this.spawnService = spawnService;
-        this.playerService = playerService;
-        this.schedulerService = schedulerService;
-        this.arenaService = arenaService;
-        this.lobbyService = lobbyService;
-        this.chestService = chestService;
-        this.itemService = itemService;
-        this.configService = configService;
+    public RoboGamesCommandHandler(LanguageRepository languageRepository, ArenaRepository arenaRepository, SpawnRepository spawnRepository, GameRepository gameRepository, PlayerRepository playerRepository, SchedulerRepository schedulerRepository, LobbyRepository lobbyRepository, ChestRepository chestRepository, ItemRepository itemRepository, ConfigRepository configRepository) {
+        this.languageRepository = languageRepository;
+        this.gameRepository = gameRepository;
+        this.spawnRepository = spawnRepository;
+        this.playerRepository = playerRepository;
+        this.schedulerRepository = schedulerRepository;
+        this.arenaRepository = arenaRepository;
+        this.lobbyRepository = lobbyRepository;
+        this.chestRepository = chestRepository;
+        this.itemRepository = itemRepository;
+        this.configRepository = configRepository;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (args.length == 0) {
-            commandSender.sendMessage(this.languageService.getMessage("usage"));
+            commandSender.sendMessage(this.languageRepository.getMessage("usage"));
             return false;
         }
 
@@ -56,14 +66,14 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        this.languageService.loadLanguageConfig(player);
+        this.languageRepository.loadLanguageConfig(player);
         return switch (args[0].toLowerCase()) {
             case "start" -> startGame(player, args[1]);
             case "end" -> endGame(player, args[1]);
             case "join" -> joinGame(player, args[1]);
             case "leave" -> leaveGame(player);
             default -> {
-                commandSender.sendMessage(this.languageService.getMessage("unknown-subcommand") + args[0]);
+                commandSender.sendMessage(this.languageRepository.getMessage("unknown-subcommand") + args[0]);
                 yield false;
             }
         };
@@ -89,41 +99,41 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
     private boolean endGame(Player player, String arenaName) {
         if (!player.hasPermission("hungergames.game.end")) {
-            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
+            player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        if (this.gameService.isGameStarting(arenaName) || !this.gameService.isGameStarted(arenaName)) {
-            player.sendMessage(this.languageService.getMessage("endgame.not-started"));
+        if (this.gameRepository.isGameStarting(arenaName) || !this.gameRepository.isGameStarted(arenaName)) {
+            player.sendMessage(this.languageRepository.getMessage("endgame.not-started"));
             return true;
         }
-        new EndGameCommand(this.gameService, this.spawnService, this.playerService, arenaName).run();
+        new EndGameCommand(this.gameRepository, this.spawnRepository, this.playerRepository, arenaName).run();
         return true;
     }
 
     private boolean startGame(Player player, String arenaName) {
         if (!player.hasPermission("hungergames.game.start")) {
-            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
+            player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new StartGameCommand(this.gameService, this.schedulerService, this.languageService, this.playerService, this.spawnService, this.chestService, this.arenaService, this.itemService, arenaName, this.configService).run();
+        new StartGameCommand(this.gameRepository, this.schedulerRepository, this.languageRepository, this.playerRepository, this.spawnRepository, this.chestRepository, this.arenaRepository, this.itemRepository, arenaName, this.configRepository).run();
         return true;
     }
 
     private boolean leaveGame(Player player) {
         if (!player.hasPermission("hungergames.game.leave")) {
-            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
+            player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new LeaveGameCommand(player, this.languageService, this.gameService, this.playerService, this.spawnService, this.arenaService, this.lobbyService).run();
+        new LeaveGameCommand(player, this.languageRepository, this.gameRepository, this.playerRepository, this.spawnRepository, this.arenaRepository, this.lobbyRepository).run();
         return true;
     }
 
     private boolean joinGame(Player player, String arenaName) {
         if (!player.hasPermission("hungergames.game.join")) {
-            player.sendMessage(this.languageService.getMessage(NO_PERMISSION_MESSAGE_KEY));
+            player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new JoinGameCommand(player, languageService, gameService, playerService, spawnService, arenaName).run();
+        new JoinGameCommand(player, languageRepository, gameRepository, playerRepository, spawnRepository, arenaName).run();
         return true;
     }
 
