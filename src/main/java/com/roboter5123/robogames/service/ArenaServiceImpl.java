@@ -4,13 +4,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.bukkit.entity.Player;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 import com.roboter5123.robogames.repository.ArenaRepository;
 import com.roboter5123.robogames.repository.ConfigRepository;
 import com.roboter5123.robogames.repository.LanguageRepository;
 import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.service.model.Arena;
-import com.roboter5123.robogames.tasks.command.ScanArenaCommand;
 
 public class ArenaServiceImpl implements ArenaService {
 
@@ -139,8 +141,7 @@ public class ArenaServiceImpl implements ArenaService {
 			this.player.sendMessage(this.languageRepository.getMessage("scanarena.failed-locations"));
 		}
 	}
-
-	@NotNull
+	
 	private static ScanArenaCommand.LowHighCoordinates getLowHighCoordinates(Arena arena) {
 		Location pos1 = arena.getPos1();
 		Location pos2 = arena.getPos2();
