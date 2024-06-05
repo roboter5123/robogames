@@ -65,7 +65,7 @@ public final class RoboGames extends JavaPlugin {
 		this.playerRepository = new PlayerRepositoryImpl(this);
 		this.schedulerRepository = new SchedulerRepositoryImpl(this);
 		this.itemRepository = new ItemRepositoryImpl(this, configRepository);
-		this.arenaService = new ArenaServiceImpl(this.languageRepository, this.arenaRepository, this.configRepository, this.spawnRepository);
+		this.arenaService = new ArenaServiceImpl(this.languageRepository, this.arenaRepository, this.configRepository, this.spawnRepository, this.chestRepository);
 	}
 
 	@Override
