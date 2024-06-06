@@ -1,12 +1,8 @@
 package com.roboter5123.robogames.service;
 
-import java.io.IOException;
-import java.util.Arrays;
-
+import com.roboter5123.robogames.service.model.Arena;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import com.roboter5123.robogames.service.model.Arena;
 
 public interface ArenaService {
 
@@ -15,4 +11,8 @@ public interface ArenaService {
 	void createArena(Player player, String arenaName);
 
 	void scanArena(Player player, String arenaName);
+
+	void refillChests(String arenaName);
+
+	Arena getArena(String arenaName);
 }

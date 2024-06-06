@@ -1,12 +1,7 @@
 package com.roboter5123.robogames.handler;
 
 import com.roboter5123.robogames.repository.ArenaRepository;
-import com.roboter5123.robogames.repository.ChestRepository;
-import com.roboter5123.robogames.repository.GameRepository;
 import com.roboter5123.robogames.repository.LanguageRepository;
-import com.roboter5123.robogames.repository.SpawnRepository;
-import com.roboter5123.robogames.tasks.command.GiveWandCommand;
-import com.roboter5123.robogames.tasks.command.SetSpawnCommand;
 import com.roboter5123.robogames.service.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,19 +18,15 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
 
     private final LanguageRepository languageRepository;
     private final ArenaRepository arenaRepository;
-    private final SpawnRepository spawnRepository;
-    private final GameRepository gameRepository;
-    private final ChestRepository chestRepository;
     private final ArenaService arenaService;
+    private final WandService wandService;
 
-    public ArenaCommandHandler(LanguageRepository languageRepository, ArenaRepository arenaRepository, SpawnRepository spawnRepository, GameRepository gameRepository, ChestRepository chestRepository,
-        ArenaService arenaService) {
+    public ArenaCommandHandler(LanguageRepository languageRepository, ArenaRepository arenaRepository,
+                               ArenaService arenaService, WandService wandService) {
         this.languageRepository = languageRepository;
         this.arenaRepository = arenaRepository;
-        this.spawnRepository = spawnRepository;
-        this.gameRepository = gameRepository;
-        this.chestRepository = chestRepository;
         this.arenaService = arenaService;
+        this.wandService = wandService;
     }
 
     @Override
@@ -76,7 +67,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageRepository.getMessage(""));
             return true;
         }
-        new GiveWandCommand(player, this.languageRepository).run();
+        this.wandService.giveArenaWand(player, null);
         return true;
     }
 
@@ -100,7 +91,7 @@ public class ArenaCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageRepository.getMessage("no-permission"));
             return true;
         }
-        new SetSpawnCommand(player, this.languageRepository, this.spawnRepository, this.gameRepository, arenaName).run();
+        this.wandService.giveSpawnWand(player, arenaName);
         return true;
     }
 

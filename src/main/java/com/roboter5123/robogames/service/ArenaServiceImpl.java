@@ -1,22 +1,22 @@
 package com.roboter5123.robogames.service;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import com.roboter5123.robogames.repository.*;
+import com.roboter5123.robogames.service.model.ChestLootTable;
+import org.bukkit.Material;
+import org.bukkit.block.Barrel;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Block;
 
-import com.roboter5123.robogames.repository.ArenaRepository;
-import com.roboter5123.robogames.repository.ChestRepository;
-import com.roboter5123.robogames.repository.ConfigRepository;
-import com.roboter5123.robogames.repository.LanguageRepository;
-import com.roboter5123.robogames.repository.SpawnRepository;
 import com.roboter5123.robogames.service.model.Arena;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class ArenaServiceImpl implements ArenaService {
 
@@ -25,15 +25,20 @@ public class ArenaServiceImpl implements ArenaService {
 	private final ConfigRepository configRepository;
 	private final SpawnRepository spawnRepository;
 	private final ChestRepository chestRepository;
+	private final ItemRepository itemRepository;
+	private final Random random;
+
 
 	public ArenaServiceImpl(LanguageRepository languageRepository, ArenaRepository arenaRepository, ConfigRepository configRepository, SpawnRepository spawnRepository,
-		ChestRepository chestRepository) {
+                            ChestRepository chestRepository, ItemRepository itemRepository) {
 		this.languageRepository = languageRepository;
 		this.arenaRepository = arenaRepository;
 		this.configRepository = configRepository;
 		this.spawnRepository = spawnRepository;
 		this.chestRepository = chestRepository;
-	}
+        this.itemRepository = itemRepository;
+        this.random = new Random();
+    }
 
 	@Override
 	public void addSpawn(Player player, Location newSpawnPoint) {
@@ -116,7 +121,7 @@ public class ArenaServiceImpl implements ArenaService {
 			return;
 		}
 
-		ArenaServiceImpl.LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
+		LowHighCoordinates lowHighCoordinates = getLowHighCoordinates(arena);
 		World world = this.arenaRepository.getWorld(arena.getWorldName());
 		try {
 			this.chestRepository.removeAllChests(arenaName);
@@ -136,6 +141,47 @@ public class ArenaServiceImpl implements ArenaService {
 		player.sendMessage(languageRepository.getMessage("scanarena.saved-locations"));
 	}
 
+	@Override
+	public void refillChests(String arenaName) {
+
+		List<Location> chestLocations = this.chestRepository.getChestLocations(arenaName);
+		Arena arena = this.arenaRepository.getArena(arenaName);
+		World world = this.arenaRepository.getWorld(arena.getWorldName());
+		for (Location chestLocation : chestLocations) {
+			Block block = world.getBlockAt(chestLocation);
+			Inventory inventory;
+			ChestLootTable lootTable;
+			if (block.getState() instanceof Chest chest && block.getType() == Material.CHEST) {
+				inventory = chest.getBlockInventory();
+				lootTable = ChestLootTable.CHEST;
+			} else if (block.getState() instanceof Chest chest && block.getType() == Material.TRAPPED_CHEST) {
+				inventory = chest.getBlockInventory();
+				lootTable = ChestLootTable.TRAPPED_CHEST;
+			} else if (block.getState() instanceof Barrel barrel) {
+				inventory = barrel.getInventory();
+				lootTable = ChestLootTable.BARREL;
+			} else continue;
+			// TODO: Change max items and min items based on config
+			int itemCount = random.nextInt(3, 7);
+			inventory.clear();
+			List<Integer> usedSlots = new ArrayList<>();
+			for (int i = 0; i < itemCount; i++) {
+				ItemStack randomChestItem = this.itemRepository.getRandomChestItem(arenaName, lootTable);
+				int slot;
+				do {
+					slot = random.nextInt(inventory.getSize());
+				} while (usedSlots.contains(slot));
+				inventory.setItem(slot, randomChestItem);
+				usedSlots.add(slot);
+			}
+		}
+	}
+
+	@Override
+	public Arena getArena(String arenaName) {
+		return this.arenaRepository.getArena(arenaName);
+	}
+
 	private void checkBlock(Player player, String arenaName, World world, int x, int y, int z) {
 		Block block = world.getBlockAt(x, y, z);
 		if (!(block.getState() instanceof Chest chest)) {
@@ -149,7 +195,7 @@ public class ArenaServiceImpl implements ArenaService {
 		}
 	}
 
-	private static ArenaServiceImpl.LowHighCoordinates getLowHighCoordinates(Arena arena) {
+	private static LowHighCoordinates getLowHighCoordinates(Arena arena) {
 		Location pos1 = arena.getPos1();
 		Location pos2 = arena.getPos2();
 
@@ -182,7 +228,7 @@ public class ArenaServiceImpl implements ArenaService {
 			highZ = (int) pos2.getZ();
 			lowZ = (int) pos1.getZ();
 		}
-		return new ArenaServiceImpl.LowHighCoordinates(lowX, highX, lowY, highY, lowZ, highZ);
+		return new LowHighCoordinates(lowX, highX, lowY, highY, lowZ, highZ);
 	}
 
 	private record LowHighCoordinates(int lowX, int highX, int lowY, int highY, int lowZ, int highZ) {

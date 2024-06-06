@@ -1,20 +1,8 @@
 package com.roboter5123.robogames.handler;
 
-import com.roboter5123.robogames.repository.ArenaRepository;
-import com.roboter5123.robogames.repository.ChestRepository;
-import com.roboter5123.robogames.repository.ConfigRepository;
 import com.roboter5123.robogames.repository.GameRepository;
-import com.roboter5123.robogames.repository.ItemRepository;
 import com.roboter5123.robogames.repository.LanguageRepository;
-import com.roboter5123.robogames.repository.LobbyRepository;
-import com.roboter5123.robogames.repository.PlayerRepository;
-import com.roboter5123.robogames.repository.SchedulerRepository;
-import com.roboter5123.robogames.repository.SpawnRepository;
-import com.roboter5123.robogames.tasks.command.EndGameCommand;
-import com.roboter5123.robogames.tasks.command.JoinGameCommand;
-import com.roboter5123.robogames.tasks.command.LeaveGameCommand;
-import com.roboter5123.robogames.tasks.command.StartGameCommand;
-
+import com.roboter5123.robogames.service.GameService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,28 +18,14 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
     private final LanguageRepository languageRepository;
     private final GameRepository gameRepository;
-    private final SpawnRepository spawnRepository;
-    private final PlayerRepository playerRepository;
-    private final SchedulerRepository schedulerRepository;
-    private final ArenaRepository arenaRepository;
-    private final LobbyRepository lobbyRepository;
-    private final ChestRepository chestRepository;
-    private final ItemRepository itemRepository;
-    private final ConfigRepository configRepository;
     private static final String NO_PERMISSION_MESSAGE_KEY = "no-permission";
+    private final GameService gameService;
 
 
-    public RoboGamesCommandHandler(LanguageRepository languageRepository, ArenaRepository arenaRepository, SpawnRepository spawnRepository, GameRepository gameRepository, PlayerRepository playerRepository, SchedulerRepository schedulerRepository, LobbyRepository lobbyRepository, ChestRepository chestRepository, ItemRepository itemRepository, ConfigRepository configRepository) {
+    public RoboGamesCommandHandler(LanguageRepository languageRepository, GameRepository gameRepository, GameService gameService) {
         this.languageRepository = languageRepository;
         this.gameRepository = gameRepository;
-        this.spawnRepository = spawnRepository;
-        this.playerRepository = playerRepository;
-        this.schedulerRepository = schedulerRepository;
-        this.arenaRepository = arenaRepository;
-        this.lobbyRepository = lobbyRepository;
-        this.chestRepository = chestRepository;
-        this.itemRepository = itemRepository;
-        this.configRepository = configRepository;
+        this.gameService = gameService;
     }
 
     @Override
@@ -106,7 +80,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageRepository.getMessage("endgame.not-started"));
             return true;
         }
-        new EndGameCommand(this.gameRepository, this.spawnRepository, this.playerRepository, arenaName).run();
+        this.gameService.endGame(arenaName);
         return true;
     }
 
@@ -115,7 +89,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new StartGameCommand(this.gameRepository, this.schedulerRepository, this.languageRepository, this.playerRepository, this.spawnRepository, this.chestRepository, this.arenaRepository, this.itemRepository, arenaName, this.configRepository).run();
+        this.gameService.startGame(arenaName);
         return true;
     }
 
@@ -124,7 +98,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new LeaveGameCommand(player, this.languageRepository, this.gameRepository, this.playerRepository, this.spawnRepository, this.arenaRepository, this.lobbyRepository).run();
+        this.gameService.leaveGame(player);
         return true;
     }
 
@@ -133,7 +107,7 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(this.languageRepository.getMessage(NO_PERMISSION_MESSAGE_KEY));
             return true;
         }
-        new JoinGameCommand(player, languageRepository, gameRepository, playerRepository, spawnRepository, arenaName).run();
+        this.gameService.joinGame(player, arenaName);
         return true;
     }
 

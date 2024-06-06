@@ -2,7 +2,6 @@ package com.roboter5123.robogames.listener;
 
 import com.roboter5123.robogames.repository.LanguageRepository;
 import com.roboter5123.robogames.repository.PlayerRepository;
-import com.roboter5123.robogames.tasks.BroadCastIngameTask;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +45,7 @@ public class PlayerKilledListener implements Listener {
         player.setGameMode(GameMode.SPECTATOR);
         player.setHealth(20);
         String message = player.getName() + this.languageRepository.getMessage("death-message");
-        new BroadCastIngameTask(this.playerRepository, message, arenaName).run();
+        this.playerRepository.getInGamePlayers(arenaName).forEach(ingamePlayer -> ingamePlayer.sendMessage(message));
         event.setCancelled(true);
     }
 }
