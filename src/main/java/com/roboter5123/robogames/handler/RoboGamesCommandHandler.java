@@ -1,5 +1,6 @@
 package com.roboter5123.robogames.handler;
 
+import com.roboter5123.robogames.repository.ArenaRepository;
 import com.roboter5123.robogames.repository.GameRepository;
 import com.roboter5123.robogames.repository.LanguageRepository;
 import com.roboter5123.robogames.service.GameService;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
 
@@ -20,12 +22,14 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
     private final GameRepository gameRepository;
     private static final String NO_PERMISSION_MESSAGE_KEY = "no-permission";
     private final GameService gameService;
+    private final ArenaRepository arenaRepository;
 
 
-    public RoboGamesCommandHandler(LanguageRepository languageRepository, GameRepository gameRepository, GameService gameService) {
+    public RoboGamesCommandHandler(LanguageRepository languageRepository, GameRepository gameRepository, GameService gameService, ArenaRepository arenaRepository) {
         this.languageRepository = languageRepository;
         this.gameRepository = gameRepository;
         this.gameService = gameService;
+        this.arenaRepository = arenaRepository;
     }
 
     @Override
@@ -56,19 +60,27 @@ public class RoboGamesCommandHandler implements CommandExecutor, TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, String[] args) {
-        if (args.length != 1) {
+        if (args.length == 1) {
+            List<String> completions = new ArrayList<>();
+            String[] commands = {"join", "leave", "start", "end"};
+            for (String cmd : commands) {
+                if (!commandSender.hasPermission("robogames.game." + cmd) && !commandSender.hasPermission("robogames.game")) {
+                    continue;
+                }
+                completions.add(cmd);
+            }
+            return completions;
+        }
+
+        if (!commandSender.hasPermission("robogames.game." + args[0]) && !commandSender.hasPermission("robogames.game")) {
             return new ArrayList<>();
         }
 
-        List<String> completions = new ArrayList<>();
-        String[] commands = {"join", "leave", "start", "end"};
-        for (String cmd : commands) {
-            if (!commandSender.hasPermission("robogames.game." + cmd) && !commandSender.hasPermission("robogames.game")) {
-                continue;
-            }
-            completions.add(cmd);
+        if (args.length == 2 && !"leave".equals(args[0])) {
+            Set<String> arenaNames = this.arenaRepository.getArenaNames();
+            return new ArrayList<>(arenaNames);
         }
-        return completions;
+        return new ArrayList<>();
     }
 
     private boolean endGame(Player player, String arenaName) {

@@ -8,7 +8,7 @@ public interface GameService {
 
     void leaveGame(Player player);
 
-    void startGame(String arenaName);
+    void startGame( String arenaName);
 
     void endGame(String arenaName);
 }

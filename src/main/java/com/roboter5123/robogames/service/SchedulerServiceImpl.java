@@ -1,14 +1,14 @@
-package com.roboter5123.robogames.repository;
+package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public class SchedulerRepositoryImpl implements SchedulerRepository {
+public class SchedulerServiceImpl implements SchedulerService {
     private final RoboGames roboGames;
 
-    public SchedulerRepositoryImpl(RoboGames roboGames) {
+    public SchedulerServiceImpl(RoboGames roboGames) {
         this.roboGames = roboGames;
     }
 

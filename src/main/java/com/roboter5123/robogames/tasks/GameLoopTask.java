@@ -32,12 +32,12 @@ public class GameLoopTask extends BukkitRunnable {
             return;
         }
 
-        if (this.playerRepository.getAlivePlayers(arenaName).size() == 1) {
+        if (this.playerRepository.getAlivePlayersByArenaName(arenaName).size() == 1) {
             endGameWithWinner();
             return;
         }
 
-        if (this.playerRepository.getAlivePlayers(arenaName).isEmpty()) {
+        if (this.playerRepository.getAlivePlayersByArenaName(arenaName).isEmpty()) {
             endGameWithoutWinner();
             return;
         }
@@ -47,9 +47,9 @@ public class GameLoopTask extends BukkitRunnable {
     }
 
     private void endGameWithWinner() {
-        Player winner = this.playerRepository.getAlivePlayers(arenaName).get(0);
+        Player winner = this.playerRepository.getAlivePlayersByArenaName(arenaName).get(0);
         String message = winner.getName() + this.languageRepository.getMessage("game.winner-text");
-        this.playerRepository.getInGamePlayers(arenaName).forEach(player -> player.sendMessage(message));
+        this.playerRepository.getInGamePlayersByArenaName(arenaName).forEach(player -> player.sendMessage(message));
         this.gameService.endGame(arenaName);
         cancel();
     }

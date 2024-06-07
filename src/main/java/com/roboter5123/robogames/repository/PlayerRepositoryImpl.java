@@ -23,7 +23,7 @@ public class PlayerRepositoryImpl implements PlayerRepository {
 
 
     @Override
-    public void clearInGamePlayers(String arenaName) {
+    public void removeAllIngamePlayersByArenaName(String arenaName) {
         ingamePlayersGuard(arenaName);
         alivePlayersGuard(arenaName);
         this.inGamePlayers.get(arenaName).clear();
@@ -31,7 +31,7 @@ public class PlayerRepositoryImpl implements PlayerRepository {
     }
 
     @Override
-    public void addInGamePlayer(String arenaName, Player player) {
+    public void createIngamePlayer(String arenaName, Player player) {
         ingamePlayersGuard(arenaName);
         alivePlayersGuard(arenaName);
         this.inGamePlayers.get(arenaName).add(player);
@@ -39,25 +39,25 @@ public class PlayerRepositoryImpl implements PlayerRepository {
     }
 
     @Override
-    public List<Player> getInGamePlayers(String arenaName) {
+    public List<Player> getInGamePlayersByArenaName(String arenaName) {
         ingamePlayersGuard(arenaName);
         return this.inGamePlayers.get(arenaName);
     }
 
     @Override
-    public List<Player> getAlivePlayers(String arenaName) {
+    public List<Player> getAlivePlayersByArenaName(String arenaName) {
         alivePlayersGuard(arenaName);
         return this.alivePlayers.get(arenaName);
     }
 
     @Override
-    public void removeAlivePlayer(String arenaName, Player player) {
+    public void removeAlivePlayerByArenaName(String arenaName, Player player) {
         alivePlayersGuard(arenaName);
         this.alivePlayers.get(arenaName).remove(player);
     }
 
     @Override
-    public void removeIngamePlayer(String arenaName, Player player) {
+    public void removeIngamePlayerByArenaName(String arenaName, Player player) {
         ingamePlayersGuard(arenaName);
         alivePlayersGuard(arenaName);
         this.inGamePlayers.get(arenaName).remove(player);

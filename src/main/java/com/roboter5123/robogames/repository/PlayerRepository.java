@@ -6,17 +6,17 @@ import java.util.List;
 
 public interface PlayerRepository {
 
-    void clearInGamePlayers(String arenaName);
+    void removeAllIngamePlayersByArenaName(String arenaName);
 
-    void addInGamePlayer(String arenaName, Player player);
+    void createIngamePlayer(String arenaName, Player player);
 
-    List<Player> getInGamePlayers(String arenaName);
+    List<Player> getInGamePlayersByArenaName(String arenaName);
 
-    List<Player> getAlivePlayers(String arenaName);
+    List<Player> getAlivePlayersByArenaName(String arenaName);
 
-    void removeAlivePlayer(String arenaName, Player player);
+    void removeAlivePlayerByArenaName(String arenaName, Player player);
 
-    void removeIngamePlayer(String arenaName, Player player);
+    void removeIngamePlayerByArenaName(String arenaName, Player player);
 
     void setMetaDataOnPlayer(Player player, String key, Object value);
 

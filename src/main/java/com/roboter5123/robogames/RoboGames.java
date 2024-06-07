@@ -39,10 +39,10 @@ public final class RoboGames extends JavaPlugin {
         this.itemRepository = new ItemRepositoryImpl(this, configRepository);
         this.gameRepository = new GameRepositoryImpl();
         this.playerRepository = new PlayerRepositoryImpl(this);
-        SchedulerRepository schedulerRepository = new SchedulerRepositoryImpl(this);
         this.languageRepository = new LanguageRepositoryImpl(this);
+        SchedulerService schedulerService = new SchedulerServiceImpl(this);
         this.arenaService = new ArenaServiceImpl(this.languageRepository, this.arenaRepository, this.configRepository, this.spawnRepository, this.chestRepository, this.itemRepository);
-        this.gameService = new GameServiceImpl(this.languageRepository, this.gameRepository, this.playerRepository, this.spawnRepository, this.lobbyRepository, schedulerRepository, this.configRepository, this.arenaService);
+        this.gameService = new GameServiceImpl(this.languageRepository, this.gameRepository, this.playerRepository, this.spawnRepository, this.lobbyRepository, schedulerService, this.configRepository, this.arenaService);
         this.wandService = new WandServiceImpl(this.languageRepository, this.spawnRepository, this.gameRepository);
     }
 
@@ -65,7 +65,7 @@ public final class RoboGames extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Objects.requireNonNull(getCommand("robogames")).setExecutor(new RoboGamesCommandHandler(this.languageRepository, this.gameRepository, this.gameService));
+        Objects.requireNonNull(getCommand("robogames")).setExecutor(new RoboGamesCommandHandler(this.languageRepository, this.gameRepository, this.gameService, this.arenaRepository));
         Objects.requireNonNull(getCommand("arena")).setExecutor(new ArenaCommandHandler(this.languageRepository, this.arenaRepository, this.arenaService, this.wandService));
         getServer().getPluginManager().registerEvents(new SelectPosListener(this.languageRepository, this.playerRepository), this);
         getServer().getPluginManager().registerEvents(new SetSpawnListener(this.languageRepository, this.spawnRepository, this.gameRepository, this.arenaService), this);
@@ -78,7 +78,7 @@ public final class RoboGames extends JavaPlugin {
     public void onDisable() {
         Set<String> arenaNames = this.arenaRepository.getArenaNames();
         for (String arenaName : arenaNames) {
-            List<Player> inGamePlayers = this.playerRepository.getInGamePlayers(arenaName);
+            List<Player> inGamePlayers = this.playerRepository.getInGamePlayersByArenaName(arenaName);
             teleportAllPlayersToLobby(arenaName, inGamePlayers);
         }
     }
