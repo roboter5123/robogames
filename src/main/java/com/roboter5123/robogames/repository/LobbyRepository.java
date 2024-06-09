@@ -1,10 +1,10 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import org.bukkit.Location;
 
 import java.io.IOException;
 
-public interface LobbyService {
+public interface LobbyRepository {
 
     void loadLobbiesConfig();
 

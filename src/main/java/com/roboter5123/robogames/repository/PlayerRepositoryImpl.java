@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.entity.Player;
@@ -7,7 +7,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.*;
 
 
-public class PlayerServiceImpl implements PlayerService {
+public class PlayerRepositoryImpl implements PlayerRepository {
 
     private final RoboGames roboGames;
 
@@ -15,7 +15,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     private final Map<String, List<Player>> inGamePlayers;
 
-    public PlayerServiceImpl(RoboGames roboGames) {
+    public PlayerRepositoryImpl(RoboGames roboGames) {
         this.roboGames = roboGames;
         this.inGamePlayers = new HashMap<>();
         this.alivePlayers = new HashMap<>();
@@ -23,7 +23,7 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     @Override
-    public void clearInGamePlayers(String arenaName) {
+    public void removeAllIngamePlayersByArenaName(String arenaName) {
         ingamePlayersGuard(arenaName);
         alivePlayersGuard(arenaName);
         this.inGamePlayers.get(arenaName).clear();
@@ -31,7 +31,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void addInGamePlayer(String arenaName, Player player) {
+    public void createIngamePlayer(String arenaName, Player player) {
         ingamePlayersGuard(arenaName);
         alivePlayersGuard(arenaName);
         this.inGamePlayers.get(arenaName).add(player);
@@ -39,25 +39,25 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<Player> getInGamePlayers(String arenaName) {
+    public List<Player> getInGamePlayersByArenaName(String arenaName) {
         ingamePlayersGuard(arenaName);
         return this.inGamePlayers.get(arenaName);
     }
 
     @Override
-    public List<Player> getAlivePlayers(String arenaName) {
+    public List<Player> getAlivePlayersByArenaName(String arenaName) {
         alivePlayersGuard(arenaName);
         return this.alivePlayers.get(arenaName);
     }
 
     @Override
-    public void removeAlivePlayer(String arenaName, Player player) {
+    public void removeAlivePlayerByArenaName(String arenaName, Player player) {
         alivePlayersGuard(arenaName);
         this.alivePlayers.get(arenaName).remove(player);
     }
 
     @Override
-    public void removeIngamePlayer(String arenaName, Player player) {
+    public void removeIngamePlayerByArenaName(String arenaName, Player player) {
         ingamePlayersGuard(arenaName);
         alivePlayersGuard(arenaName);
         this.inGamePlayers.get(arenaName).remove(player);

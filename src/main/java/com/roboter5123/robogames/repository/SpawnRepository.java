@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public interface SpawnService {
+public interface SpawnRepository {
 
     void loadSpawnConfig();
 

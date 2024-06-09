@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.Location;
@@ -12,23 +12,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class LobbyServiceImpl implements LobbyService{
+public class LobbyRepositoryImpl implements LobbyRepository {
 
     private final RoboGames roboGames;
-    private final ConfigService configService;
+    private final ConfigRepository configRepository;
     private final Map<String, Location> lobbies;
     private static final String LOBBIES_FILE_NAME = "lobbies.yml";
 
 
-    public LobbyServiceImpl(RoboGames roboGames, ConfigService configService) {
+    public LobbyRepositoryImpl(RoboGames roboGames, ConfigRepository configRepository) {
         this.roboGames = roboGames;
-        this.configService = configService;
+        this.configRepository = configRepository;
         this.lobbies = new HashMap<>();
     }
 
     public void loadLobbiesConfig() {
         this.lobbies.clear();
-        File lobbiesFile = this.configService.loadConfigFile(LOBBIES_FILE_NAME);
+        File lobbiesFile = this.configRepository.loadConfigFile(LOBBIES_FILE_NAME);
         YamlConfiguration lobbiesConfig = YamlConfiguration.loadConfiguration(lobbiesFile);
         Set<String> lobbyNames = lobbiesConfig.getConfigurationSection("").getKeys(false);
         for (String lobbyName : lobbyNames) {
@@ -44,7 +44,7 @@ public class LobbyServiceImpl implements LobbyService{
         return this.lobbies.get(arenaName);
     }
     public void createLobby(String lobbyName, Location lobby) throws IOException {
-        File lobbiesFile = this.configService.loadConfigFile(LOBBIES_FILE_NAME);
+        File lobbiesFile = this.configRepository.loadConfigFile(LOBBIES_FILE_NAME);
         YamlConfiguration lobbiesConfig = YamlConfiguration.loadConfiguration(lobbiesFile);
         ConfigurationSection configSection = convertToConfigurationSection(lobby);
         lobbiesConfig.set(lobbyName, configSection);

@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import com.roboter5123.robogames.service.model.ChestLootTable;
@@ -18,18 +18,18 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ItemServiceImpl implements ItemService {
+public class ItemRepositoryImpl implements ItemRepository {
 
 	private final Random random;
 	private final RoboGames roboGames;
-	private final ConfigService configService;
+	private final ConfigRepository configRepository;
 	private final Map<String, Map<ChestLootTable, List<LootTableEntry>>> lootTables;
 	private final Map<String, Map<ChestLootTable, List<LootTableEntry>>> weightedItemsList;
 	private static final String ITEMS_FILE_NAME = "items.yml";
 
-	public ItemServiceImpl(RoboGames roboGames, ConfigService configService) {
+	public ItemRepositoryImpl(RoboGames roboGames, ConfigRepository configRepository) {
 		this.roboGames = roboGames;
-		this.configService = configService;
+		this.configRepository = configRepository;
 		this.lootTables = new HashMap<>();
 		this.weightedItemsList = new HashMap<>();
 		this.random = new Random();
@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
 		// TODO: Check for bugs
 		this.lootTables.clear();
 		this.weightedItemsList.clear();
-		File itemsFile = this.configService.loadConfigFile(ITEMS_FILE_NAME);
+		File itemsFile = this.configRepository.loadConfigFile(ITEMS_FILE_NAME);
 		YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
 		Set<String> arenaNames = itemsConfig.getConfigurationSection("").getKeys(false);
 		for (String arenaName : arenaNames) {

@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import org.bukkit.Location;
 import org.bukkit.block.Chest;
@@ -6,7 +6,7 @@ import org.bukkit.block.Chest;
 import java.io.IOException;
 import java.util.List;
 
-public interface ChestService {
+public interface ChestRepository {
 
     void loadChestConfig();
     List<Location> getChestLocations(String arenaName);

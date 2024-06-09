@@ -1,16 +1,14 @@
 package com.roboter5123.robogames.service;
 
+import org.bukkit.entity.Player;
+
 public interface GameService {
 
-    boolean isGameStarted(String arenaName);
+    void joinGame(Player player, String arenaName);
 
-    boolean isGameStarting(String arenaName);
+    void leaveGame(Player player);
 
-    void setGameStarting(String arenaName, boolean gameStarting);
+    void startGame( String arenaName);
 
-    void setGameStarted(String arenaName, boolean gameStarted);
-
-    Long getTimer(String arenaName);
-
-    void setTimerTicks(String arenaName, Long timer);
+    void endGame(String arenaName);
 }

@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.ChatColor;
@@ -14,13 +14,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public class LanguageServiceImpl implements LanguageService {
+public class LanguageRepositoryImpl implements LanguageRepository {
 
 
     private final RoboGames roboGames;
     private YamlConfiguration langConfig;
 
-    public LanguageServiceImpl(RoboGames roboGames) {
+    public LanguageRepositoryImpl(RoboGames roboGames) {
         this.roboGames = roboGames;
     }
 

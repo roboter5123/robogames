@@ -1,10 +1,10 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import org.bukkit.entity.Player;
 
 import java.io.File;
 
-public interface LanguageService {
+public interface LanguageRepository {
 
     public String getMessage(String messageKey);
 

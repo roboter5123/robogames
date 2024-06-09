@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public class SchedulerServiceImpl implements SchedulerService{
+public class SchedulerServiceImpl implements SchedulerService {
     private final RoboGames roboGames;
 
     public SchedulerServiceImpl(RoboGames roboGames) {

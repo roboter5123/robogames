@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.Location;
@@ -10,22 +10,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class ChestServiceImpl implements ChestService {
+public class ChestRepositoryImpl implements ChestRepository {
 
     private final RoboGames roboGames;
-    private final ConfigService configService;
+    private final ConfigRepository configRepository;
     private final Map<String, List<Location>> chests;
     private static final String CHESTS_FILE_NAME = "chests.yml";
-    public ChestServiceImpl(RoboGames roboGames, ConfigService configService) {
+    public ChestRepositoryImpl(RoboGames roboGames, ConfigRepository configRepository) {
         this.roboGames = roboGames;
-        this.configService = configService;
+        this.configRepository = configRepository;
         this.chests = new HashMap<>();
     }
 
     @Override
     public void loadChestConfig() {
         this.chests.clear();
-        File chestsFile = this.configService.loadConfigFile(CHESTS_FILE_NAME);
+        File chestsFile = this.configRepository.loadConfigFile(CHESTS_FILE_NAME);
         YamlConfiguration chestsConfig = YamlConfiguration.loadConfiguration(chestsFile);
         Set<String> arenaNames = Objects.requireNonNull(chestsConfig.getConfigurationSection("")).getKeys(false);
         for (String arenaName : arenaNames) {
@@ -54,7 +54,7 @@ public class ChestServiceImpl implements ChestService {
             List<Location> locations = this.chests.get(arenaName);
             locations.add(chest.getLocation());
         }
-        File chestsFile = this.configService.loadConfigFile(CHESTS_FILE_NAME);
+        File chestsFile = this.configRepository.loadConfigFile(CHESTS_FILE_NAME);
         YamlConfiguration chestsConfig = YamlConfiguration.loadConfiguration(chestsFile);
         List<Map<String, String>> yamlChests = this.chests.get(arenaName).stream().map(this::convertToYaml).toList();
         chestsConfig.set(arenaName, yamlChests);
@@ -68,7 +68,7 @@ public class ChestServiceImpl implements ChestService {
         if (this.chests.containsKey(arenaName)) {
             this.chests.get(arenaName).clear();
         }
-        File chestFile = this.configService.loadConfigFile(CHESTS_FILE_NAME);
+        File chestFile = this.configRepository.loadConfigFile(CHESTS_FILE_NAME);
         YamlConfiguration chestsConfig = YamlConfiguration.loadConfiguration(chestFile);
         if (chestsConfig.contains(arenaName)) {
             chestsConfig.set(arenaName, null);

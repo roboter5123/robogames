@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,11 +12,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 
-public class ConfigServiceImpl implements ConfigService{
+public class ConfigRepositoryImpl implements ConfigRepository {
 
     private final RoboGames roboGames;
 
-    public ConfigServiceImpl(RoboGames roboGames) {
+    public ConfigRepositoryImpl(RoboGames roboGames) {
         this.roboGames = roboGames;
     }
 

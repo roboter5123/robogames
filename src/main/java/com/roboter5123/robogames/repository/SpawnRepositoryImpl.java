@@ -1,4 +1,4 @@
-package com.roboter5123.robogames.service;
+package com.roboter5123.robogames.repository;
 
 import com.roboter5123.robogames.RoboGames;
 import org.bukkit.Location;
@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class SpawnServiceImpl implements SpawnService {
+public class SpawnRepositoryImpl implements SpawnRepository {
 
     private final RoboGames roboGames;
     private final Map<String, List<Location>> spawns;
@@ -18,12 +18,12 @@ public class SpawnServiceImpl implements SpawnService {
 
     private final Map<String, List<Location>> freeSpawnPoints;
     private static final String SPAWNS_FILE_NAME = "spawns.yml";
-    private final ConfigService configService;
+    private final ConfigRepository configRepository;
 
 
-    public SpawnServiceImpl(RoboGames roboGames, ConfigService configService) {
+    public SpawnRepositoryImpl(RoboGames roboGames, ConfigRepository configRepository) {
         this.roboGames = roboGames;
-        this.configService = configService;
+        this.configRepository = configRepository;
         this.spawns = new HashMap<>();
         this.playerSpawns = new HashMap<>();
         this.freeSpawnPoints = new HashMap<>();
@@ -31,7 +31,7 @@ public class SpawnServiceImpl implements SpawnService {
 
     public void loadSpawnConfig() {
         this.spawns.clear();
-        File spawnFile = this.configService.loadConfigFile(SPAWNS_FILE_NAME);
+        File spawnFile = this.configRepository.loadConfigFile(SPAWNS_FILE_NAME);
         YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
         Set<String> arenaNames = spawnConfig.getConfigurationSection("").getKeys(false);
         for (String arenaName : arenaNames) {
@@ -63,7 +63,7 @@ public class SpawnServiceImpl implements SpawnService {
             locations.add(spawn);
             this.freeSpawnPoints.get(arenaName).add(spawn);
         }
-        File spawnFile = this.configService.loadConfigFile(SPAWNS_FILE_NAME);
+        File spawnFile = this.configRepository.loadConfigFile(SPAWNS_FILE_NAME);
         YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
         List<Map<String, String>> yamlSpawns = this.spawns.get(arenaName).stream().map(this::convertToYaml).toList();
         roboGames.getServer().getLogger().info(yamlSpawns.toString());
@@ -82,7 +82,7 @@ public class SpawnServiceImpl implements SpawnService {
         if (this.freeSpawnPoints.containsKey(arenaName)) {
             this.freeSpawnPoints.get(arenaName).clear();
         }
-        File spawnFile = this.configService.loadConfigFile(SPAWNS_FILE_NAME);
+        File spawnFile = this.configRepository.loadConfigFile(SPAWNS_FILE_NAME);
         YamlConfiguration spawnConfig = YamlConfiguration.loadConfiguration(spawnFile);
         if (spawnConfig.contains(arenaName)) {
             spawnConfig.set(arenaName, null);

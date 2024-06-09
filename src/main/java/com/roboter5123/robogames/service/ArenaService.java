@@ -2,22 +2,17 @@ package com.roboter5123.robogames.service;
 
 import com.roboter5123.robogames.service.model.Arena;
 import org.bukkit.Location;
-import org.bukkit.World;
-
-import java.io.IOException;
-import java.util.Set;
+import org.bukkit.entity.Player;
 
 public interface ArenaService {
 
-    void loadArenaConfig();
+	void addSpawn(Player player, Location newSpawnPoint);
 
-    Arena getArena(String arena);
+	void createArena(Player player, String arenaName);
 
-    void createArena(Arena arena) throws IOException;
+	void scanArena(Player player, String arenaName);
 
-    Set<String> getArenaNames();
+	void refillChests(String arenaName);
 
-    boolean isInArenaBounds(String arenaName, Location location);
-
-    World getWorld(String worldName);
+	Arena getArena(String arenaName);
 }
