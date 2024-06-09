@@ -1,33 +1,14 @@
 package com.roboter5123.robogames.service;
 
-import com.roboter5123.robogames.model.GameState;
+import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+public interface GameService {
 
-public class GameService {
+    void joinGame(Player player, String arenaName);
 
-    private final GameState gameState;
+    void leaveGame(Player player);
 
+    void startGame( String arenaName);
 
-    public GameService() {
-        this.gameState = new GameState(false, false, new HashMap<>());
-    }
-
-    public boolean isGameStarted() {
-        return this.gameState.isGameStarted();
-    }
-
-    public boolean isGameStarting() {
-        return this.gameState.isGameStarting();
-    }
-
-    public void setGameStarting(boolean gameStarting) {
-        this.gameState.setGameStarting(gameStarting);
-    }
-
-    public void setGameStarted(boolean gameStarted) {
-        this.gameState.setGameStarted(gameStarted);
-    }
-
-
+    void endGame(String arenaName);
 }

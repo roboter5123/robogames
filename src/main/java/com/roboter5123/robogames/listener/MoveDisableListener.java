@@ -1,10 +1,8 @@
 package com.roboter5123.robogames.listener;
 
-import com.roboter5123.robogames.model.Arena;
-import com.roboter5123.robogames.model.Coordinate;
-import com.roboter5123.robogames.service.ArenaService;
-import com.roboter5123.robogames.service.GameService;
-import com.roboter5123.robogames.service.PlayerService;
+import com.roboter5123.robogames.repository.ArenaRepository;
+import com.roboter5123.robogames.repository.GameRepository;
+import com.roboter5123.robogames.repository.PlayerRepository;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,41 +12,36 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class MoveDisableListener implements Listener {
 
-    private final PlayerService playerService;
-    private final GameService gameService;
-    private final ArenaService arenaService;
+    private final PlayerRepository playerRepository;
+    private final GameRepository gameRepository;
+    private final ArenaRepository arenaRepository;
 
-    public MoveDisableListener(PlayerService playerService, GameService gameService, ArenaService arenaService) {
-        this.playerService = playerService;
-        this.gameService = gameService;
-        this.arenaService = arenaService;
+    public MoveDisableListener(PlayerRepository playerRepository, GameRepository gameRepository, ArenaRepository arenaRepository) {
+        this.playerRepository = playerRepository;
+        this.gameRepository = gameRepository;
+        this.arenaRepository = arenaRepository;
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+
         Player player = event.getPlayer();
-        if (this.gameService.isGameStarted()) {
+        String arenaName = this.playerRepository.getArenaNameByPlayer(player);
+        if (arenaName == null) {
             return;
         }
-        if (!this.playerService.getInGamePlayers().contains(player)) {
+
+        if (this.gameRepository.isGameStarted(arenaName)) {
             return;
         }
 
         Location from = event.getFrom();
         Location to = event.getTo();
-
-        if (from.getX() == to.getX() || from.getZ() == to.getZ()) {
+        if (to.getX() == from.getX() && to.getZ() == from.getZ()) {
             return;
         }
 
-        Arena arena = this.arenaService.getArena();
-        Coordinate pos1 = arena.getPos1();
-        Coordinate pos2 = arena.getPos2();
-        boolean isInXArenaBounds = to.getX() >= Math.min(pos1.getxCoordinate(), pos2.getxCoordinate()) && to.getX() <= Math.max(pos1.getxCoordinate(), pos2.getxCoordinate());
-        boolean isInYArenaBounds = to.getY() >= Math.min(pos1.getyCoordinate(), pos2.getyCoordinate()) && to.getY() <= Math.max(pos1.getyCoordinate(), pos2.getyCoordinate());
-        boolean isInZArenaBounds = to.getZ() >= Math.min(pos1.getzCoordinate(), pos2.getzCoordinate()) && to.getZ() <= Math.max(pos1.getzCoordinate(), pos2.getzCoordinate());
-
-        if (!isInXArenaBounds || !isInYArenaBounds || !isInZArenaBounds) {
+        if (!this.arenaRepository.isInArenaBounds(arenaName, to)) {
             return;
         }
 

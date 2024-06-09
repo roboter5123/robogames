@@ -1,3 +1,4 @@
+time-past: "&eTime past: "
 time-remaining: "&eTime remaining"
 no-permission: "&cYou do not have permission to run this command"
 no-server: "&cThis command can only be executed by players"
@@ -8,6 +9,8 @@ usage: "Usage: /hg <subcommand> [args]"
 arena:
   stick-name: "&aArena Selector"
   save-error: "&cCould not save arena.yml to "
+  arena-exists: "&cArena name already taken!"
+  arena-doesnt-exists: "&cArena doesn't exist!"
   stick-left: "&bLeft-click to select position 1"
   stick-right: "&bRight-click to select position 2"
   given-stick: "&aYou have been given an Arena Selector"
@@ -41,13 +44,15 @@ join:
   already-joined: "&cYou have already joined the game!"
   auto-join: "&bYou have been automatically joined to the game!"
   not-enough-spawns: "&cNot enough spawnpoints to join!"
+  arena-doesnt-exist: "&cArena doesn't exist!"
   game-started: "&cGame has already started!"
   success: "&cYou joined the game!"
 
 leave:
-    not-joined: "&cYou have not joined the game!"
-    game-is-starting: "&cCan not leave while the game is starting!"
-    success: "&cYou left the game!"
+  not-joined: "&cYou have not joined the game!"
+  game-is-starting: "&cCan not leave while the game is starting!"
+  broadcast: "&c has left the game!"
+  success: "&cYou left the game!"
 
 scanarena:
   region-undef: "&cThe area region is not defined in the config."
@@ -113,7 +118,7 @@ game:
   winner-text: "&d is the winner!"
   time-up: "&6The time is up! No one won the game!"
   killed-message: "&c has been eliminated from the game by "
-  death-message: "&c has eliminated themselves from the game"
+  death-message: "&c has been eliminated from the game."
 
 setarena:
   first-pos-1: "&dFirst position set at &bX="
@@ -137,6 +142,8 @@ setspawnhandler:
   joined-message-3: "/"
   joined-message-4: "]"
   spawn-filled: "&cAll spawn points are currently occupied!"
+  not-in-arena: "&cSpawnpoint not inside arena bounds"
+
 
 borderhandler:
   start-shrink: "&6The world border has started to shrink"
